@@ -4,8 +4,8 @@ put #class arrive off
 put #class combat off
 put #class joust off
 
-# automapper.cmd version 5.3
-# last changed: August 29th, 2016
+# automapper.cmd version 5.5
+# last changed: August 26th, 2017
 
 # Added handler for attempting to enter closed shops from Shroomism
 # Added web retry support from Dasffion
@@ -32,6 +32,10 @@ put #class joust off
 # - Will cast guild-specific fatigue recovery buffs if possible and pause to wait for stamina before continuing
 # Shroom - Added additional catches for climbing fail and needing to stand
 # Shroom - Added further support and logic for ropes
+# Thires - Added brooms/carpets use when traveling
+# Thires - Added wearing/removing ice skates for the ice path
+# Thires - Added handling kneeling when in cigar shop in Haven
+# Thires - Improved stun recognizing
 
 # Related macros
 # ---------------
@@ -56,6 +60,9 @@ action var current_path %0 when ^You go
 action put #var powerwalk 0 when eval ($powerwalk == 1 && $Attunement.LearningRate=34)
 action var slow_on_ice 1 when ^You had better slow down! The ice is far too treacherous
 action var slow_on_ice 1 when ^At the speed you are traveling, you are going to slip and fall sooner or later
+action var skates_worn 1 when ^You slide your ice skates on your feet and tightly tie the laces
+action var skates_worn 0 when ^You untie your skates and slip them off of your feet
+action var skates_bag $1 when ^You get some .+ ice skates .+ from inside your (.+)\.
 
 	if $mapwalk = 1 then
 		{
@@ -71,6 +78,18 @@ var depth 0
 var movewait 0
 var closed 0
 var slow_on_ice 0
+var skates_worn 0
+# put_skates_on 1, you will use skates
+var put_skates_on 0
+# Not sure setting the var skates_bag setting is needed with action added above
+# skates_bag is where you store your skates
+# var skates_bag containerwhereskatesstored
+# var worn_feet can bet set with some foot wear you have that isn't on the list or will cause issues
+# with brawling gear or what have you, else leave it blank and it will look for what you have on.
+var worn_feet
+# I think I got all of the worn on foot nouns of items
+# I put this here so it is easier to modify
+var foot_worn_nouns ankle-boots|bells|boots|brogans|buskins|calf-boots|chopines|clogs|cothurnes|gutalles|half-boots|hessians|loafers|moccasins|mules|nauda|pumps|sandals|shoes|slipers|spats|thigh-boots|toe-bells|toe-ring|toe ring|workboots|wraps
 
 var move_OK ^Obvious (paths|exits)|^It's pitch dark
 var move_FAIL ^You can't go there|^What were you referring to|^I could not find what you were referring to\.|^You can't sneak in that direction|^You can't ride your.+(broom|carpet) in that direction|^You can't ride your.+(broom|carpet) in that direction|^You can't ride that way\.$
@@ -79,7 +98,7 @@ var move_RETREAT ^You are engaged to|^You try to move, but you're engaged|^While
 var move_WEB ^You can't do that while entangled in a web
 var move_WAIT ^You continue climbing|^You begin climbing|^You really should concentrate on your journey|^You step onto a massive stairway
 var move_END_DELAY ^You reach|you reach\.\.\.$
-var move_STAND ^You must be standing to do that|^You can't do that while (lying down|kneeling|sitting)|you trip over an exposed root|^Stand up first\.|^You must stand first\.|^You'll need to stand up|a particularly sturdy one finally brings you to your knees\.$|You try to roll through the fall but end up on your back\.$
+var move_STAND ^You must be standing to do that|^You can't do that while (lying down|kneeling|sitting)|you trip over an exposed root|^Stand up first\.|^You must stand first\.|^You'll need to stand up|a particularly sturdy one finally brings you to your knees\.$|You try to roll through the fall but end up on your back\.$|^Perhaps you might accomplish that if you were standing\.$
 var move_NO_SNEAK ^You can't do that here|^In which direction are you trying to sneak|^Sneaking is an inherently stealthy|^You can't sneak that way|^You can't sneak in that direction
 var move_GO ^Please rephrase that command
 var move_MUCK ^You fall into the .+ with a loud \*SPLUT\*|^You slip in .+ and fall flat on your back\!|^The .+ holds you tightly, preventing you from making much headway\.|^You make no progress in the mud|^You struggle forward, managing a few steps before ultimately falling short of your goal\.
@@ -113,8 +132,9 @@ actions:
 	action (mapper) goto move.drawbridge when %move_DRAWBRIDGE
 	action (mapper) goto move.knock when The gate is closed\.  Try KNOCKing instead
 	action (mapper) goto move.rope.bridge when %move_ROPE.BRIDGE
-     action (mapper) goto move.fatigue when %move_FATIGUE
-     action (mapper) goto move.climb.mount.fail when %climb_mount_FAIL
+   action (mapper) goto move.fatigue when %move_FATIGUE
+   action (mapper) goto move.climb.mount.fail when %climb_mount_FAIL
+	action (mapper) goto move.kneel when maybe if you knelt down first\?
 	return
 
 loop:
@@ -202,7 +222,8 @@ move:
 				}
 			}
 		}
-	}
+	
+	if %type != ice and %skates_worn == 1 then gosub ice.remove.skates
 	goto move.%type
 move.real:
 	put %movement
@@ -221,6 +242,7 @@ move.room:
 	goto move.done
 move.ice:
 	if %depth > 1 then waiteval 1 = %depth
+	if %put_skates_on == 1 and %skates_worn != 1 then gosub ice.wear.skates
 	if %slow_on_ice == 1 then gosub ice.collect
 	put %movement
 	nextroom
@@ -235,6 +257,34 @@ ice.collect:
 	matchwait
 ice.return:
 	var slow_on_ice 0
+	action (mapper) on
+	return
+ice.wear.skates:
+	action (mapper) off
+	if "%worn_feet" == "" then { 
+		action var worn_feet $2 when ^\s+(a|an|some)\s(.+)$
+		put inv feet
+		waitfor All of your items worn on the feet
+		if matchre ("%worn_feet", "\b(%foot_worn_nouns)\b") then var worn_feet $0
+	}
+	pause 0.3
+	put remove my %worn_feet
+	pause 0.3
+	# put get my skates from my %skates_bag
+	put get my skates
+	pause 0.3
+	put wear my skates
+	pause 0.3
+	action (mapper) on
+	return
+ice.remove.skates:
+	action (mapper) off
+	put remove my skates
+	pause 0.3
+	put wear my %worn_feet
+	pause 0.3
+	put put my skates in my %skates_bag
+	pause 0.3
 	action (mapper) on
 	return
 move.knock:
@@ -254,8 +304,11 @@ turn.cloak:
 move.drag:
 move.sneak:
 move.swim:
+	if (matchre ("$roomobjs", "\b(broom|carpet)\b") then eval movement replacere("%movement", "swim ", " ")
 move.rt:
 move.web:
+####added this to stop trainer
+	eval movement replacere("%movement", "script crossingtrainerfix ", "")
 	put %movement
 	pause
 	goto move.done
@@ -480,6 +533,10 @@ move.stow:
 move.go:
 	put go %movement
 	goto move.done
+move.kneel:
+	put kneel
+	put %movement
+	goto move.done
 move.nosneak:
 	if %closed = 1 then goto move.closed
 	eval movement replacere("%movement", "sneak ", "")
@@ -500,9 +557,8 @@ move.retry:
 	echo *** Retry movement
 	echo
 	pause 0.5
-	if $stunned = 1 then
-	{
-		pause
+	if (contains("$prompt", "S") > 0 OR $stunned == 1 then {
+		pause 2
 		goto move.retry
 	}
 	goto return.clear
@@ -534,9 +590,9 @@ move.failed:
 	echo ********************************
 	echo
 
-    if %failcounter > 3 then {
-    echo [Trying: %remaining_path(2) due to possible movement overload]
-    put %remaining_path(2)
+    if %failcounter > 4 then {
+    echo [Trying: %remaining_path(3) due to possible movement overload]
+    put %remaining_path(3)
     }
 
 	put #parse MOVE FAILED
