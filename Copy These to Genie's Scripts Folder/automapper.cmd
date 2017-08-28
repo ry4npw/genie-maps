@@ -62,7 +62,7 @@ put #class arrive off
 # #alias {setskatesbag} {#var skates_bag $0;#echo *** Ice Skates bag is $0}
 # Standard Account = 1, Premium Account = 2, LTB Premium = 3
 # will use a global to set it by character.  This helps when you have both premium and standard accounts.
-debuglevel 10
+#debuglevel 10
 action var current_path %0 when ^You go
 action put #var powerwalk 0 when eval ($powerwalk == 1 && $Attunement.LearningRate=34)
 action var slow_on_ice 1 when ^You had better slow down! The ice is far too treacherous
