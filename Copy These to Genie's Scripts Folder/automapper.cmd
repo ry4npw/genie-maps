@@ -1,8 +1,8 @@
-put #class racial on
-put #class rp on
+# put #class racial on
+# put #class rp on
 put #class arrive off
-put #class combat off
-put #class joust off
+# put #class combat off
+# put #class joust off
 
 # automapper.cmd version 5.5
 # last changed: August 26th, 2017
@@ -45,6 +45,9 @@ put #class joust off
 # Add the following macro for toggling Caravans:
 # #macro {C, Control} {#if {$caravan = 1}{#var caravan 0;#echo *** Caravan Following off}{#var caravan 1;#echo *** Caravan Following on}}
 #
+# Add the following macro for toggling wearing skates:
+# #macro {S, Control} {#if {$skates_put_on = 1}{#var skates_put_on 0;#echo *** Skates are not used}{#var skates_put_on 1;#echo *** Skates are being used}}
+#
 # Related aliases
 # ---------------
 # Add the following aliases for toggling dragging:
@@ -53,16 +56,20 @@ put #class joust off
 # Add the following aliases for toggling treasure map mode:
 # #alias {mapoff} {#var mapwalk 0}
 # #alias {mapon} {#var mapwalk 1}
+# Use this if you have foot wear that isn't on the list
+# #alias {setwornfeet} {#var skates_worn_feet $0;#echo *** Worn foot wear $0}
+# This is may not be needed but just incase
+# #alias {setskatesbag} {#var skates_bag $0;#echo *** Ice Skates bag is $0}
 # Standard Account = 1, Premium Account = 2, LTB Premium = 3
 # will use a global to set it by character.  This helps when you have both premium and standard accounts.
-#debuglevel 10
+debuglevel 10
 action var current_path %0 when ^You go
 action put #var powerwalk 0 when eval ($powerwalk == 1 && $Attunement.LearningRate=34)
 action var slow_on_ice 1 when ^You had better slow down! The ice is far too treacherous
 action var slow_on_ice 1 when ^At the speed you are traveling, you are going to slip and fall sooner or later
 action var skates_worn 1 when ^You slide your ice skates on your feet and tightly tie the laces
 action var skates_worn 0 when ^You untie your skates and slip them off of your feet
-action var skates_bag $1 when ^You get some .+ ice skates .+ from inside your (.+)\.
+action var skates_bag $0 when ^You get some .+ ice skates .+ from inside your (.+)\.
 
 	if $mapwalk = 1 then
 		{
@@ -79,14 +86,8 @@ var movewait 0
 var closed 0
 var slow_on_ice 0
 var skates_worn 0
-# put_skates_on 1, you will use skates
-var put_skates_on 0
-# Not sure setting the var skates_bag setting is needed with action added above
-# skates_bag is where you store your skates
-# var skates_bag containerwhereskatesstored
-# var worn_feet can bet set with some foot wear you have that isn't on the list or will cause issues
-# with brawling gear or what have you, else leave it blank and it will look for what you have on.
-var worn_feet
+var skates_bag 
+var skates_worn_feet 
 # I think I got all of the worn on foot nouns of items
 # I put this here so it is easier to modify
 var foot_worn_nouns ankle-boots|bells|boots|brogans|buskins|calf-boots|chopines|clogs|cothurnes|gutalles|half-boots|hessians|loafers|moccasins|mules|nauda|pumps|sandals|shoes|slipers|spats|thigh-boots|toe-bells|toe-ring|toe ring|workboots|wraps
@@ -222,10 +223,10 @@ move:
 				}
 			}
 		}
-	
-	if %type != ice and %skates_worn == 1 then gosub ice.remove.skates
+#	if "%type" != "ice" and if %skates_worn == 1 then gosub ice.remove.skates
 	goto move.%type
 move.real:
+if %skates_worn == 1 then gosub ice.remove.skates
 	put %movement
 	goto return
 move.power:
@@ -242,7 +243,7 @@ move.room:
 	goto move.done
 move.ice:
 	if %depth > 1 then waiteval 1 = %depth
-	if %put_skates_on == 1 and %skates_worn != 1 then gosub ice.wear.skates
+	if $skates_put_on == 1 and %skates_worn != 1 then gosub ice.wear.skates
 	if %slow_on_ice == 1 then gosub ice.collect
 	put %movement
 	nextroom
@@ -261,17 +262,21 @@ ice.return:
 	return
 ice.wear.skates:
 	action (mapper) off
-	if "%worn_feet" == "" then { 
-		action var worn_feet $2 when ^\s+(a|an|some)\s(.+)$
+	if "$skates_worn_feet" != " " or "$skates_worn_feet" != "" then var skates_worn_feet $skates_worn_feet
+	if "%skates_worn_feet" == " " or "%skates_worn_feet" == "" then { 
+		action var skates_worn_feet $2 when ^\s+(a|an|some)\s(.+)$
 		put inv feet
 		waitfor All of your items worn on the feet
-		if matchre ("%worn_feet", "\b(%foot_worn_nouns)\b") then var worn_feet $0
+		if matchre ("%skates_worn_feet", "\b(%foot_worn_nouns)\b") then var skates_worn_feet $0
 	}
 	pause 0.3
-	put remove my %worn_feet
+	put remove my %skates_worn_feet
 	pause 0.3
-	# put get my skates from my %skates_bag
-	put get my skates
+	if "%skates_bag" != "" or %skates_bag != " " then { 
+		var skates_bag %skates_bag
+		put get my skates from my %skates_bag
+	}
+	else put get my skates
 	pause 0.3
 	put wear my skates
 	pause 0.3
@@ -281,10 +286,13 @@ ice.remove.skates:
 	action (mapper) off
 	put remove my skates
 	pause 0.3
-	put wear my %worn_feet
+	put wear my %skates_worn_feet
 	pause 0.3
 	put put my skates in my %skates_bag
 	pause 0.3
+	unvar skates_bag
+	unvar skates_worn_feet
+	unvar skates_put_on
 	action (mapper) on
 	return
 move.knock:
@@ -309,6 +317,10 @@ move.rt:
 move.web:
 ####added this to stop trainer
 	eval movement replacere("%movement", "script crossingtrainerfix ", "")
+	if matchre("%movement", "\bice\b") and $hidden == 1 then {
+		put unhide
+		eval movement replacere("%movement", "(ice|sneak)", "")
+	}
 	put %movement
 	pause
 	goto move.done
