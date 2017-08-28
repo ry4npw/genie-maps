@@ -69,7 +69,7 @@ action var slow_on_ice 1 when ^You had better slow down! The ice is far too trea
 action var slow_on_ice 1 when ^At the speed you are traveling, you are going to slip and fall sooner or later
 action var skates_worn 1 when ^You slide your ice skates on your feet and tightly tie the laces
 action var skates_worn 0 when ^You untie your skates and slip them off of your feet
-action var skates_bag $0 when ^You get some .+ ice skates .+ from inside your (.+)\.
+action var skates_bag $1 when ^You get some .+ ice skates .+ from inside your (.+)\.
 
 	if $mapwalk = 1 then
 		{
@@ -290,10 +290,10 @@ ice.remove.skates:
 	pause 0.3
 	put put my skates in my %skates_bag
 	pause 0.3
+	action (mapper) on
 	unvar skates_bag
 	unvar skates_worn_feet
 	unvar skates_put_on
-	action (mapper) on
 	return
 move.knock:
      matchre move.done %move_OK|All right, welcome back|opens the door just enough to let you slip through|wanted criminal
