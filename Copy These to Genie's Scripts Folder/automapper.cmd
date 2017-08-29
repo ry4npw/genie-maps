@@ -289,7 +289,7 @@ ice.remove.skates:
 	put wear my %skates_worn_feet
 	pause 0.3
 	put put my skates in my %skates_bag
-	pause 0.3
+	waitfor You put
 	action (mapper) on
 	unvar skates_bag
 	unvar skates_worn_feet
