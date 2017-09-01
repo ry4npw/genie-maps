@@ -1,8 +1,8 @@
-put #class racial on
-put #class rp on
+# put #class racial on
+# put #class rp on
 put #class arrive off
-put #class combat off
-put #class joust off
+# put #class combat off
+# put #class joust off
 
 # automapper.cmd version 5.5
 # last changed: August 26th, 2017
@@ -269,25 +269,25 @@ ice.wear.skates:
 		waitfor All of your items worn on the feet
 		if matchre ("%skates_worn_feet", "\b(%foot_worn_nouns)\b") then var skates_worn_feet $0
 	}
-	pause 0.3
+	pause 0.5
 	put remove my %skates_worn_feet
-	pause 0.3
+	pause 0.5
 	if "%skates_bag" != "" or %skates_bag != " " then { 
 		var skates_bag %skates_bag
 		put get my skates from my %skates_bag
 	}
 	else put get my skates
-	pause 0.3
+	pause 0.5
 	put wear my skates
-	pause 0.3
+	pause 0.5
 	action (mapper) on
 	return
 ice.remove.skates:
 	action (mapper) off
 	put remove my skates
-	pause 0.3
+	pause 0.5
 	put wear my %skates_worn_feet
-	pause 0.3
+	pause 0.5
 	put put my skates in my %skates_bag
 	waitfor You put
 	action (mapper) on
@@ -340,7 +340,7 @@ move.slow:
 	goto move.real
 move.climb:
 	matchre move.done %move_OK
-     matchre move.climb.mount.fail climb what\?
+   matchre move.climb.mount.fail climb what\?
 	matchre move.climb.with.rope %climb_FAIL
 	if (matchre ("$roomobjs", "\b(broom|carpet)\b") then eval movement replacere("%movement", "climb ", "go ")
 	put %movement
@@ -354,21 +354,21 @@ move.climb.with.rope:
      action (mapper) off
 	if !contains("$righthand $lefthand", "braided heavy rope") then
 	{
-          pause 0.001
-          pause 0.1
+			pause 0.001
+			pause 0.1
 		send get my braided rope
 		send uncoil my braided rope
-		pause 0.5
-          pause 0.1
+			pause 0.5
+			pause 0.1
 	}
 	if !contains("$righthand $lefthand", "heavy rope") then
 	{
-		pause 0.001
-          pause 0.1
+			pause 0.001
+			pause 0.1
 		send get my heavy rope
 		send uncoil my heavy rope
-		pause 0.5
-          pause 0.1
+			pause 0.5
+         pause 0.1
 	}
      action (mapper) on
 	if ("$guild" = "Thief") && ($concentration > 50) then
@@ -569,7 +569,7 @@ move.retry:
 	echo *** Retry movement
 	echo
 	pause 0.5
-	if (contains("$prompt", "S") > 0 OR $stunned == 1 then {
+	if matchre("$prompt", [S]) OR $stunned == 1 then {
 		pause 2
 		goto move.retry
 	}
