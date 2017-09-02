@@ -1,5 +1,8 @@
+put #class racial on
 put #class rp on
 put #class arrive off
+put #class combat off
+put #class joust off
 
 # automapper.cmd version 5.3
 # last changed: August 29th, 2016
