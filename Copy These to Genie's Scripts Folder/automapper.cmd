@@ -1,11 +1,8 @@
-# put #class racial on
-# put #class rp on
+put #class rp on
 put #class arrive off
-# put #class combat off
-# put #class joust off
 
-# automapper.cmd version 5.5
-# last changed: August 26th, 2017
+# automapper.cmd version 5.3
+# last changed: August 29th, 2016
 
 # Added handler for attempting to enter closed shops from Shroomism
 # Added web retry support from Dasffion
@@ -32,10 +29,6 @@ put #class arrive off
 # - Will cast guild-specific fatigue recovery buffs if possible and pause to wait for stamina before continuing
 # Shroom - Added additional catches for climbing fail and needing to stand
 # Shroom - Added further support and logic for ropes
-# Thires - Added brooms/carpets use when traveling
-# Thires - Added wearing/removing ice skates for the ice path
-# Thires - Added handling kneeling when in cigar shop in Haven
-# Thires - Improved stun recognizing
 
 # Related macros
 # ---------------
@@ -45,9 +38,6 @@ put #class arrive off
 # Add the following macro for toggling Caravans:
 # #macro {C, Control} {#if {$caravan = 1}{#var caravan 0;#echo *** Caravan Following off}{#var caravan 1;#echo *** Caravan Following on}}
 #
-# Add the following macro for toggling wearing skates:
-# #macro {S, Control} {#if {$skates_put_on = 1}{#var skates_put_on 0;#echo *** Skates are not used}{#var skates_put_on 1;#echo *** Skates are being used}}
-#
 # Related aliases
 # ---------------
 # Add the following aliases for toggling dragging:
@@ -56,10 +46,6 @@ put #class arrive off
 # Add the following aliases for toggling treasure map mode:
 # #alias {mapoff} {#var mapwalk 0}
 # #alias {mapon} {#var mapwalk 1}
-# Use this if you have foot wear that isn't on the list
-# #alias {setwornfeet} {#var skates_worn_feet $0;#echo *** Worn foot wear $0}
-# This is may not be needed but just incase
-# #alias {setskatesbag} {#var skates_bag $0;#echo *** Ice Skates bag is $0}
 # Standard Account = 1, Premium Account = 2, LTB Premium = 3
 # will use a global to set it by character.  This helps when you have both premium and standard accounts.
 #debuglevel 10
@@ -67,9 +53,6 @@ action var current_path %0 when ^You go
 action put #var powerwalk 0 when eval ($powerwalk == 1 && $Attunement.LearningRate=34)
 action var slow_on_ice 1 when ^You had better slow down! The ice is far too treacherous
 action var slow_on_ice 1 when ^At the speed you are traveling, you are going to slip and fall sooner or later
-action var skates_worn 1 when ^You slide your ice skates on your feet and tightly tie the laces
-action var skates_worn 0 when ^You untie your skates and slip them off of your feet
-action var skates_bag $1 when ^You get some .+ ice skates .+ from inside your (.+)\.
 
 	if $mapwalk = 1 then
 		{
@@ -85,12 +68,6 @@ var depth 0
 var movewait 0
 var closed 0
 var slow_on_ice 0
-var skates_worn 0
-var skates_bag 
-var skates_worn_feet 
-# I think I got all of the worn on foot nouns of items
-# I put this here so it is easier to modify
-var foot_worn_nouns ankle-boots|bells|boots|brogans|buskins|calf-boots|chopines|clogs|cothurnes|gutalles|half-boots|hessians|loafers|moccasins|mules|nauda|pumps|sandals|shoes|slipers|spats|thigh-boots|toe-bells|toe-ring|toe ring|workboots|wraps
 
 var move_OK ^Obvious (paths|exits)|^It's pitch dark
 var move_FAIL ^You can't go there|^What were you referring to|^I could not find what you were referring to\.|^You can't sneak in that direction|^You can't ride your.+(broom|carpet) in that direction|^You can't ride your.+(broom|carpet) in that direction|^You can't ride that way\.$
@@ -223,10 +200,9 @@ move:
 				}
 			}
 		}
-#	if "%type" != "ice" and if %skates_worn == 1 then gosub ice.remove.skates
+	}
 	goto move.%type
 move.real:
-if %skates_worn == 1 then gosub ice.remove.skates
 	put %movement
 	goto return
 move.power:
@@ -243,7 +219,6 @@ move.room:
 	goto move.done
 move.ice:
 	if %depth > 1 then waiteval 1 = %depth
-	if $skates_put_on == 1 and %skates_worn != 1 then gosub ice.wear.skates
 	if %slow_on_ice == 1 then gosub ice.collect
 	put %movement
 	nextroom
@@ -259,41 +234,6 @@ ice.collect:
 ice.return:
 	var slow_on_ice 0
 	action (mapper) on
-	return
-ice.wear.skates:
-	action (mapper) off
-	if "$skates_worn_feet" != " " or "$skates_worn_feet" != "" then var skates_worn_feet $skates_worn_feet
-	if "%skates_worn_feet" == " " or "%skates_worn_feet" == "" then { 
-		action var skates_worn_feet $2 when ^\s+(a|an|some)\s(.+)$
-		put inv feet
-		waitfor All of your items worn on the feet
-		if matchre ("%skates_worn_feet", "\b(%foot_worn_nouns)\b") then var skates_worn_feet $0
-	}
-	pause 0.5
-	put remove my %skates_worn_feet
-	pause 0.5
-	if "%skates_bag" != "" or %skates_bag != " " then { 
-		var skates_bag %skates_bag
-		put get my skates from my %skates_bag
-	}
-	else put get my skates
-	pause 0.5
-	put wear my skates
-	pause 0.5
-	action (mapper) on
-	return
-ice.remove.skates:
-	action (mapper) off
-	put remove my skates
-	pause 0.5
-	put wear my %skates_worn_feet
-	pause 0.5
-	put put my skates in my %skates_bag
-	waitfor You put
-	action (mapper) on
-	unvar skates_bag
-	unvar skates_worn_feet
-	unvar skates_put_on
 	return
 move.knock:
      matchre move.done %move_OK|All right, welcome back|opens the door just enough to let you slip through|wanted criminal
@@ -312,15 +252,10 @@ turn.cloak:
 move.drag:
 move.sneak:
 move.swim:
-	if (matchre ("$roomobjs", "\b(broom|carpet)\b") then eval movement replacere("%movement", "swim ", " ")
 move.rt:
 move.web:
 ####added this to stop trainer
 	eval movement replacere("%movement", "script crossingtrainerfix ", "")
-	if matchre("%movement", "\bice\b") and $hidden == 1 then {
-		put unhide
-		eval movement replacere("%movement", "(ice|sneak)", "")
-	}
 	put %movement
 	pause
 	goto move.done
@@ -340,7 +275,7 @@ move.slow:
 	goto move.real
 move.climb:
 	matchre move.done %move_OK
-   matchre move.climb.mount.fail climb what\?
+     matchre move.climb.mount.fail climb what\?
 	matchre move.climb.with.rope %climb_FAIL
 	if (matchre ("$roomobjs", "\b(broom|carpet)\b") then eval movement replacere("%movement", "climb ", "go ")
 	put %movement
@@ -354,21 +289,21 @@ move.climb.with.rope:
      action (mapper) off
 	if !contains("$righthand $lefthand", "braided heavy rope") then
 	{
-			pause 0.001
-			pause 0.1
+          pause 0.001
+          pause 0.1
 		send get my braided rope
 		send uncoil my braided rope
-			pause 0.5
-			pause 0.1
+		pause 0.5
+          pause 0.1
 	}
 	if !contains("$righthand $lefthand", "heavy rope") then
 	{
-			pause 0.001
-			pause 0.1
+		pause 0.001
+          pause 0.1
 		send get my heavy rope
 		send uncoil my heavy rope
-			pause 0.5
-         pause 0.1
+		pause 0.5
+          pause 0.1
 	}
      action (mapper) on
 	if ("$guild" = "Thief") && ($concentration > 50) then
@@ -569,8 +504,9 @@ move.retry:
 	echo *** Retry movement
 	echo
 	pause 0.5
-	if matchre("$prompt", [S]) OR $stunned == 1 then {
-		pause 2
+	if $stunned = 1 then
+	{
+		pause
 		goto move.retry
 	}
 	goto return.clear
