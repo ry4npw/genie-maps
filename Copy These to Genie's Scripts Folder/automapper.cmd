@@ -34,7 +34,7 @@
 # Added stamina support for Aesry stairs - Will cast fatigue recovery buffs if possible and pause to wait for stamina 
 
 # 2017-11-13 - Shroom - Synced changes and updates from TF and Prime versions -  To make compatible across both instances
-# Added ICE SKATE support for Ice Road - checks for skates and wears them during ice if you have them
+# Added ICE SKATE support for Ice Road - Checks for ice skates and wears them during ice road, also checks your footwear and puts it back on after 
 # Added support for Stowing foot item when you have an item stuck at your feet
 
 # Related macros
@@ -135,8 +135,7 @@ actions:
      action (mapper) var itemtostow $2;goto stowfootitem when ^You notice (.*) (\S+) at your feet\, and do not wish to leave it behind\.
      action (skates) var wearingskates 1 when ^You slide your ice skates on your feet and tightly tie the laces\.|^Your ice skates help you traverse the frozen terrain\.|^Your movement is hindered a little by your ice skates\.
      action (skates) var wearingskates 0 when ^You untie your skates and slip them off of your feet\.
-     action var slow_on_ice 1 when ^You had better slow down! The ice is far too treacherous
-     action var slow_on_ice 1 when ^At the speed you are traveling, you are going to slip and fall sooner or later
+     action var slow_on_ice 1; echo Ice detected! when ^You had better slow down\! The ice is|^At the speed you are traveling
      return
 loop:
      gosub wave
@@ -312,7 +311,8 @@ skate.yes:
 footwear.check:
      echo *** Checking your footwear.. ***
      pause 0.1
-     matchre footware.remove (footwraps?|footwear|boots?|moccasins?|sandals?|slippers?|shoes?|thigh-boots?|work-boots?|mules|ankle-boots?|workboots?|steel-toed boots?|calf-boots?)
+     matchre footware.remove (boots?|shoes?|moccasins?|sandals?|slippers?|mules|workboots?|footwraps?|footwear|spats?|chopines?|nuada|booties|clogs|buskins|cothurnes?|galoshes)
+     matchre footware.remove (half-boots?|ankle-boots?|gutalles?|hessians?|brogans?|toe ring|toe bells?|toe-bells?|toe-ring|loafers?|pumps?)
      matchre footwear.none ^You aren't wearing anything like that
      put inv feet
      matchwait 8
