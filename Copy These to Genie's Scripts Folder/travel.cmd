@@ -1,9 +1,8 @@
-#debug 5
+debug 5
 # Script to Travel #
 # Written by Chris/Achilles #
 # Requires EXP Plugin by VTCifer #
 # If you are calling this script via another, use ^YOU ARRIVED! to match the end of travelling!
-# This script will NOT fetch coin for you, make sure you have coin if you need it!
 #
 ##########################################
 #                                        #
@@ -89,6 +88,9 @@ put exp 0
 wait
 put #var save
 if "%destination" = "" then goto nodestination
+if "$zoneid" = "0" then gosub MOVE_RANDOM
+pause 0.1
+if "$zoneid" = "0" then gosub MOVE_RANDOM
 if "$zoneid" = "0" then
         {
             ECHO ### You are in a spot not recognized by Genie, please start somewhere else! ###
@@ -387,7 +389,7 @@ crossing:
                         gosub move 394
                         if $Perception.Ranks > 150 then gosub move 5
                     }
-                if "%detour" = "sorrow" then 
+                if "%detour" = "sorrow" then
                     {
                         gosub move 397
                         gosub move 77
@@ -419,7 +421,7 @@ crossing:
                         gosub move 476
                         gosub move 30
                     }
-                if "$zoneid" = "1" then 
+                if "$zoneid" = "1" then
                     {
                         gosub move 236
                         gosub ferrylogic
@@ -517,7 +519,7 @@ ilithi:
                         gosub move 476
                         gosub move 30
                     }
-                if "$zoneid" = "1" then 
+                if "$zoneid" = "1" then
                     {
                         gosub move 236
                         gosub ferrylogic
@@ -534,7 +536,7 @@ ilithi:
   if "$zoneid" = "61" then gosub move 130
   if "$zoneid" = "63" then gosub move 112
   if "$zoneid" = "62" && $Athletics.Ranks >= %undergondola then gosub move 153
-  if "$zoneid" = "62" then 
+  if "$zoneid" = "62" then
             {
                 gosub move 2
                 gosub ferrylogic
@@ -768,7 +770,7 @@ therengia:
             }
   if "$zoneid" = "40" && matchre("(haven|zaulfung)","%detour") then
             {
-                if $Athletics.Ranks >= %rossmansouth then 
+                if $Athletics.Ranks >= %rossmansouth then
                     {
                         gosub move 213
                         gosub move 15
@@ -858,7 +860,7 @@ ford:
                         gosub move 476
                         gosub move 30
                     }
-                if "$zoneid" = "1" then 
+                if "$zoneid" = "1" then
                     {
                         gosub move 236
                         gosub ferrylogic
@@ -903,7 +905,7 @@ ford:
             {
                 gosub move 153
             }
-  if "$zoneid" = "62" then 
+  if "$zoneid" = "62" then
             {
                 gosub move 2
                 gosub ferrylogic
@@ -955,7 +957,7 @@ ford:
                 put west
                 waitforre ^Obvious
             }
-  if "$zoneid" = "113" && "$roomid" = "8" then 
+  if "$zoneid" = "113" && "$roomid" = "8" then
             {
                 put north
                 waitforre ^Obvious
@@ -1027,7 +1029,7 @@ nocoin:
     pause
     goto %label
 coinquit:
-  echo YOU DIDN'T HAVE ENOUGH MONEY IN THE BANK TO RIDE PUBLIC TRANSPORT.  
+  echo YOU DIDN'T HAVE ENOUGH MONEY IN THE BANK TO RIDE PUBLIC TRANSPORT.
   echo EITHER GET MORE ATHLETICS, OR MORE MONEY, YOU FUCKING NOOB!
   exit
 move.retry:
@@ -1045,20 +1047,20 @@ move:
   var move.room $0
 move.goto:
   #gosub retreat
-  matchre move.return ^YOU HAVE ARRIVED
+  matchre MOVE_RETURN ^YOU HAVE ARRIVED
   matchre move.skip ^SHOP CLOSED
   matchre move.retry ^MOVE FAILED
   matchre move.fail ^DESTINATION NOT FOUND
   matchre move.retry ^You can't go
   matchre move.retry ^You're still recovering from your recent attack\.
-  matchre move.retreat ^You are engaged
-  matchre move.retreat ^You can't do that while engaged!
+  matchre MOVE_RETURN ^You are engaged
+  matchre MOVE_RETURN ^You can't do that while engaged!
   put #goto %move.room
   matchwait
 move.fail:
   var move.fail 1
-  goto move.return
-move.retreat:
+  goto MOVE_RETURN
+MOVE_RETURN:
   pause .1
   gosub retreat
   pause .1
@@ -1072,7 +1074,7 @@ retreat:
   pause .1
   pause .1
   return
-move.return:
+MOVE_RETURN:
   pause .1
   pause .1
   #put #mapper reset
@@ -1103,7 +1105,7 @@ gondola:
   pause 10
   goto gondola
 ongondola:
-  pause 
+  pause
   pause
   if "%direction" = "north" then put north
   else put south
@@ -1169,3 +1171,166 @@ nodestination:
   Echo ## Inner Hib | Hibarnhvidar |Boar Clan ##
   Echo -------------------------------------------
   exit
+
+MOVE_RANDOM:
+     delay 0.0001
+     random 1 13
+     if (%r = 1) && (!$north) then goto MOVE_RANDOM
+     if (%r = 2) && (!$northeast) then goto MOVE_RANDOM
+     if (%r = 3) && (!$east) then goto MOVE_RANDOM
+     if (%r = 4) && (!$southeast) then goto MOVE_RANDOM
+     if (%r = 5) && (!$south) then goto MOVE_RANDOM
+     if (%r = 6) && (!$southwest) then goto MOVE_RANDOM
+     if (%r = 7) && (!$west) then goto MOVE_RANDOM
+     if (%r = 8) && (!$northwest) then goto MOVE_RANDOM
+     if (%r = 9) && (!$out) then goto MOVE_RANDOM
+     if (%r = 10) && (!$up) then goto MOVE_RANDOM
+     if (%r = 11) && (!$down) then goto MOVE_RANDOM
+     if (%r = 12) && !matchre("$roomobjs","doorway|door") then goto MOVE_RANDOM
+     if (%r = 13) && !matchre("$roomobjs","archway|arch") then goto MOVE_RANDOM
+     #
+     if (%r = 1) then var Direction north
+     if (%r = 2) then var Direction northeast
+     if (%r = 3) then var Direction east
+     if (%r = 4) then var Direction southeast
+     if (%r = 5) then var Direction south
+     if (%r = 6) then var Direction southwest
+     if (%r = 7) then var Direction west
+     if (%r = 8) then var Direction northwest
+     if (%r = 9) then var Direction out
+     if (%r = 10) then var Direction up
+     if (%r = 11) then var Direction down
+     if (%r = 12) then var Direction go door
+     if (%r = 13) then var Direction go arch
+     #
+     if (%r = 1) then var Reverse.Direction south
+     if (%r = 2) then var Reverse.Direction southwest
+     if (%r = 3) then var Reverse.Direction west
+     if (%r = 4) then var Reverse.Direction northwest
+     if (%r = 5) then var Reverse.Direction north
+     if (%r = 6) then var Reverse.Direction northeast
+     if (%r = 7) then var Reverse.Direction east
+     if (%r = 8) then var Reverse.Direction southeast
+     if (%r = 9) then var Reverse.Direction out
+     if (%r = 10) then var Reverse.Direction down
+     if (%r = 11) then var Reverse.Direction up
+     if (%r = 12) then var Reverse.Direction go door
+     if (%r = 13) then var Reverse.Direction go arch
+     #
+     var Exits 0
+     if ($north) then math Exits add 1
+     if ($northeast) then math Exits add 1
+     if ($east) then math Exits add 1
+     if ($southeast) then math Exits add 1
+     if ($south) then math Exits add 1
+     if ($southwest) then math Exits add 1
+     if ($west) then math Exits add 1
+     if ($out) then math Exits add 1
+     if ($up) then math Exits add 1
+     if ($down) then math Exits add 1
+     if matchre("$roomobjs","doorway|door") then math Exits add 1
+     if matchre("$roomobjs","archway|arch") then math Exits add 1
+     #
+     # don't move "back" on a path unless we hit a dead end
+     if (%Exits > 1) && ("%Last.Direction" = "%Reverse.Direction") then goto MOVE_RANDOM
+     #
+     var Last.Direction %Direction
+     # Trigger to set variable for occupied room, when roaming.
+     action instant var Occupied 1 when ^Also here\:|^Also in the room\:
+     var Occupied 0
+     gosub MOVE_RESUME
+     #if (%Occupied) then goto MOVE_RANDOM
+     RETURN
+
+MOVEIT:
+     delay 0.0001
+     var Direction $0
+     var movefailCounter 0
+MOVE_RESUME:
+     matchre MOVE_RESUME ^\.\.\.wait|^Sorry\,
+     matchre MOVE_RESUME ^You make your way up the .*\.\s*Partway up\, you make the mistake of looking down\.\s*Struck by vertigo\, you cling to the .* for a few moments\, then slowly climb back down\.
+     matchre MOVE_RESUME ^You pick your way up the .*\, but reach a point where your footing is questionable\.\s*Reluctantly\, you climb back down\.
+     matchre MOVE_RESUME ^You approach the .*\, but the steepness is intimidating\.
+     matchre MOVE_RESUME ^You struggle
+     matchre MOVE_RESUME ^You blunder
+     matchre MOVE_RESUME ^You slap
+     matchre MOVE_RESUME ^You work
+     matchre MOVE_RESUME make much headway
+     matchre MOVE_RESUME ^You flounder around in the water\.
+     matchre MOVE_RETURN ^You are engaged to .*\!
+     matchre MOVE_STAND ^You start up the .*\, but slip after a few feet and fall to the ground\!\s*You are unharmed but feel foolish\.
+     matchre MOVE_STAND ^Running heedlessly over the rough terrain\, you trip over an exposed root and land face first in the dirt\.
+     matchre MOVE_STAND ^You can't do that while lying down\.
+     matchre MOVE_STAND ^You can't do that while sitting\!
+     matchre MOVE_STAND ^You must be standing to do that\.
+     matchre MOVE_STAND ^You must stand first\.
+     matchre MOVE_STAND ^Stand up first.
+     matchre MOVE_DIG ^You make no progress in the mud \-\- mostly just shifting of your weight from one side to the other\.
+     matchre MOVE_DIG ^You find yourself stuck in the mud\, unable to move much at all after your pathetic attempts\.
+     matchre MOVE_DIG ^You struggle forward\, managing a few steps before ultimately falling short of your goal\.
+     matchre MOVE_DIG ^Like a blind\, lame duck\, you wallow in the mud in a feeble attempt at forward motion\.
+     matchre MOVE_DIG ^The mud holds you tightly\, preventing you from making much headway\.
+     matchre MOVE_DIG ^You fall into the mud with a loud \*SPLUT\*\.
+     matchre MOVE_FAILED ^You can't go there
+     matchre MOVE_FAILED ^I could not find what you were referring to\.
+     matchre MOVE_FAILED ^What were you referring to\?
+     matchre MOVE_RETURN ^It's pitch dark
+     matchre MOVE_RETURN ^Obvious
+     send %Direction
+     matchwait
+MOVE_STAND:
+     pause 0.1
+     matchre MOVE_STAND ^\.\.\.wait|^Sorry\,
+     matchre MOVE_STAND ^You are overburdened and cannot manage to stand\.
+     matchre MOVE_STAND ^The weight
+     matchre MOVE_STAND ^You try
+     matchre MOVE_RETURN ^You are already standing\.
+     matchre MOVE_RETURN ^You stand(?:\s*back)? up\.
+     matchre MOVE_RETURN ^You stand up\.
+     send stand
+     matchwait
+MOVE_RETURN:
+     pause 0.1
+     matchre MOVE_RETURN ^\.\.\.wait|^Sorry\,
+     matchre MOVE_RETURN ^You retreat back to pole range\.
+     matchre MOVE_RETURN ^You try to back away
+     matchre MOVE_STAND ^You must stand first\.
+     matchre MOVE_RESUME ^You retreat from combat\.
+     matchre MOVE_RESUME ^You are already as far away as you can get\!
+     send retreat
+     matchwait
+MOVE_DIG:
+     pause 0.1
+     matchre MOVE_DIG ^\.\.\.wait|^Sorry\,
+     matchre MOVE_DIG ^You struggle to dig off the thick mud caked around your legs\.
+     matchre MOVE_STAND ^You manage to dig enough mud away from your legs to assist your movements\.
+     matchre MOVE_DIG_STAND ^Maybe you can reach better that way\, but you'll need to stand up for that to really do you any good\.
+     matchre MOVE_RESUME ^You will have to kneel
+     send dig
+     matchwait
+MOVE_DIG_STAND:
+     pause 0.1
+     matchre MOVE_DIG_STAND ^\.\.\.wait|^Sorry\,
+     matchre MOVE_DIG_STAND ^The weight
+     matchre MOVE_DIG_STAND ^You try
+     matchre MOVE_DIG_STAND ^You are overburdened and cannot manage to stand\.
+     matchre MOVE_DIG ^You stand(?:\s*back)? up\.
+     matchre MOVE_DIG ^You are already standing\.
+     send stand
+     matchwait
+MOVE_FAILED:
+     evalmath movefailCounter (movefailCounter + 1)
+     if (%movefailCounter > 3) then goto MOVE_FAIL_BAIL
+     pause 0.5
+     goto MOVE_RESUME
+MOVE_FAIL_BAIL:
+     put #echo
+     put #echo >$Log Crimson *** MOVE FAILED. ***
+     put #echo Crimson *** MOVE FAILED.  ***
+     put #echo Crimson Skipping to next shop
+     put #echo
+     put #parse MOVE FAILED
+     gosub clear
+     goto %LAST
+MOVE_RETURN:
+     RETURN
