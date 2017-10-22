@@ -1,4 +1,4 @@
-debug 5
+#debug 5
 # Script to Travel #
 # Written by Chris/Achilles #
 # Requires EXP Plugin by VTCifer #
