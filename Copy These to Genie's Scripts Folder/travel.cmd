@@ -17,6 +17,13 @@
 ##  You will take public transportation ##
 ##                                      ##
 ##########################################
+##########################################
+##                                      ##
+##  ARE YOU A SHARD CITIZEN?            ##
+##   yes OR no                          ##
+    var shardcitizen yes
+##                                      ##
+##########################################
 ##    RANKS TO USE THE ROSSMAN'S        ##
 ##          SHORTCUT                    ##
 ## NORTH
@@ -36,13 +43,7 @@
 ##########################################
 ##########################################
 ##    RANKS TO USE UNDER-SEGOLTHA(THIEF)##
-    var undersegoltha 70
-##########################################
-##                                      ##
-##  ARE YOU A SHARD CITIZEN?            ##
-##   yes OR no                          ##
-    var shardcitizen yes
-##                                      ##
+    var undersegoltha 65
 ##########################################
 if "shardcitizen" = "yes" then
             {
@@ -88,10 +89,15 @@ put exp 0
 wait
 put #var save
 if "%destination" = "" then goto nodestination
-if "$zoneid" = "0" then gosub MOVE_RANDOM
+if ("$zoneid" = "0") || ("$roomid" = "0") then 
+     {
+     echo **** Unknown map or room id - Attempting to move in random direction to recover
+     gosub MOVE_RANDOM
+     }
 pause 0.1
-if "$zoneid" = "0" then gosub MOVE_RANDOM
-if "$zoneid" = "0" then
+if ("$zoneid" = "0") || ("$roomid" = "0") then gosub MOVE_RANDOM
+pause 0.1
+if "$zoneid" = "0" then 
         {
             ECHO ### You are in a spot not recognized by Genie, please start somewhere else! ###
             exit
@@ -268,6 +274,7 @@ crossing:
   if "$zoneid" = "59" then gosub move 12
   if "$zoneid" = "114" then
             {
+                if %dokoras < 60 then goto nocoin
                 gosub move 1
                 gosub ferrylogic
                 send go oak doors
@@ -276,6 +283,7 @@ crossing:
   if "$zoneid" = "40" && $Athletics.Ranks >= %rossmansouth then gosub move 213
   if "$zoneid" = "40" && $Athletics.Ranks < %rossmansouth then
             {
+                if %lirums < 70 then goto nocoin
                 gosub move 36
                 gosub ferrylogic
             }
@@ -287,6 +295,7 @@ crossing:
   if "$zoneid" = "31" then gosub move 1
   if "$zoneid" = "30" && $Athletics.Ranks < %faldesu then
             {
+                if %lirums < 70 then goto nocoin
                 gosub move 103
                 pause
                 gosub ferrylogic
@@ -357,6 +366,7 @@ crossing:
   if "$zoneid" = "60" && $Athletics.Ranks >= %segoltha then gosub move 108
   if "$zoneid" = "60" && $Athletics.Ranks < %segoltha then
             {
+                if %kronars < 40 then goto nocoin
                 gosub move 42
                 pause
                 gosub ferrylogic
@@ -389,7 +399,7 @@ crossing:
                         gosub move 394
                         if $Perception.Ranks > 150 then gosub move 5
                     }
-                if "%detour" = "sorrow" then
+                if "%detour" = "sorrow" then 
                     {
                         gosub move 397
                         gosub move 77
@@ -421,8 +431,9 @@ crossing:
                         gosub move 476
                         gosub move 30
                     }
-                if "$zoneid" = "1" then
+                if "$zoneid" = "1" then 
                     {
+                        if %kronars < 40 then goto nocoin
                         gosub move 236
                         gosub ferrylogic
                     }
@@ -454,6 +465,7 @@ ilithi:
   if "$zoneid" = "116" then gosub move 3
   if "$zoneid" = "114" then
             {
+                if %dokoras < 60 then goto nocoin
                 gosub move 4
                 gosub ferrylogic
                 send west
@@ -465,6 +477,7 @@ ilithi:
   if "$zoneid" = "59" then gosub move 12
   if "$zoneid" = "114" then
             {
+                if %dokoras < 60 then goto nocoin
                 gosub move 1
                 gosub ferrylogic
                 send go oak doors
@@ -473,6 +486,7 @@ ilithi:
   if "$zoneid" = "40" && $Athletics.Ranks >= %rossmansouth then gosub move 213
   if "$zoneid" = "40" && $Athletics.Ranks < %rossmansouth then
             {
+                if %lirums < 70 then goto nocoin
                 gosub move 36
                 gosub ferrylogic
             }
@@ -484,6 +498,7 @@ ilithi:
   if "$zoneid" = "31" then gosub move 1
   if "$zoneid" = "30" && $Athletics.Ranks < %faldesu then
             {
+                if %lirums < 70 then goto nocoin
                 gosub move 103
                 pause
                 gosub ferrylogic
@@ -519,8 +534,9 @@ ilithi:
                         gosub move 476
                         gosub move 30
                     }
-                if "$zoneid" = "1" then
+                if "$zoneid" = "1" then 
                     {
+                        if %kronars < 40 then goto nocoin
                         gosub move 236
                         gosub ferrylogic
                     }
@@ -536,7 +552,7 @@ ilithi:
   if "$zoneid" = "61" then gosub move 130
   if "$zoneid" = "63" then gosub move 112
   if "$zoneid" = "62" && $Athletics.Ranks >= %undergondola then gosub move 153
-  if "$zoneid" = "62" then
+  if "$zoneid" = "62" then 
             {
                 gosub move 2
                 gosub ferrylogic
@@ -623,6 +639,7 @@ therengia:
   if "$zoneid" = "116" then gosub move 3
   if "$zoneid" = "114" then
             {
+                if %lirums < 70 then goto nocoin
                 gosub move 1
                 gosub ferrylogic
                 put go oak doors
@@ -670,6 +687,7 @@ therengia:
   if "$zoneid" = "60" && $Athletics.Ranks >= %segoltha then gosub move 108
   if "$zoneid" = "60" && $Athletics.Ranks < %segoltha then
             {
+                if %kronars < 40 then goto nocoin
                 gosub move 42
                 pause
                 gosub ferrylogic
@@ -687,6 +705,7 @@ therengia:
   if "$zoneid" = "7" && $Athletics.Ranks >= %faldesu then gosub move 197
   if "$zoneid" = "7" && $Athletics.Ranks < %faldesu then
             {
+                if %lirums < 70 then goto nocoin
                 gosub move 81
                 gosub ferrylogic
             }
@@ -698,6 +717,7 @@ therengia:
   if "$zoneid" = "34a" && "%detour" != "rossman" then gosub move 145
   if "$zoneid" = "34" && "%detour" = "rossman" then
             {
+                if %lirums < 70 then goto nocoin
                 gosub move 22
                 goto arrived
             }
@@ -725,6 +745,7 @@ therengia:
             {
                 if $Athletics.Ranks < %rossmannorth then
                     {
+                        if %lirums < 70 then goto nocoin
                         gosub move 99
                         gosub ferrylogic
                     }
@@ -770,7 +791,7 @@ therengia:
             }
   if "$zoneid" = "40" && matchre("(haven|zaulfung)","%detour") then
             {
-                if $Athletics.Ranks >= %rossmansouth then
+                if $Athletics.Ranks >= %rossmansouth then 
                     {
                         gosub move 213
                         gosub move 15
@@ -779,6 +800,7 @@ therengia:
                     }
                 if $Athletics.Ranks < %rossmansouth then
                     {
+                        if %lirums < 70 then goto nocoin
                         gosub move 36
                         gosub ferrylogic
                     }
@@ -815,6 +837,7 @@ ford:
   if "$zoneid" = "40" && $Athletics.Ranks >= %rossmansouth then gosub move 213
   if "$zoneid" = "40" && $Athletics.Ranks < %rossmansouth then
             {
+                if %lirums < 70 then goto nocoin
                 gosub move 36
                 gosub ferrylogic
             }
@@ -826,6 +849,7 @@ ford:
   if "$zoneid" = "31" then gosub move 1
   if "$zoneid" = "30" && $Athletics.Ranks < %faldesu then
             {
+                if %lirums < 70 then goto nocoin
                 gosub move 103
                 pause
                 gosub ferrylogic
@@ -860,8 +884,9 @@ ford:
                         gosub move 476
                         gosub move 30
                     }
-                if "$zoneid" = "1" then
+                if "$zoneid" = "1" then 
                     {
+                        if %kronars < 40 then goto nocoin
                         gosub move 236
                         gosub ferrylogic
                     }
@@ -874,6 +899,7 @@ ford:
   if "$zoneid" = "61" && "%detour" = "ain" then gosub move 126
   if "$zoneid" = "114" && "%detour" != "ain" then
             {
+                if %dokoras < 60 then goto nocoin
                 gosub move 4
                 gosub ferrylogic
                 send west
@@ -894,6 +920,7 @@ ford:
                     }
                 if $Athletics.Ranks < %undergondola then
                     {
+                        if %dokoras < 60 then goto nocoin
                         gosub move 98
                         gosub ferrylogic
                     }
@@ -905,7 +932,7 @@ ford:
             {
                 gosub move 153
             }
-  if "$zoneid" = "62" then
+  if "$zoneid" = "62" then 
             {
                 gosub move 2
                 gosub ferrylogic
@@ -933,6 +960,7 @@ ford:
   if "$zoneid" = "116" && matchre("(raven|ain)","%detour") then gosub move 3
   if "$zoneid" = "123" && "%detour" = "ain" then
             {
+                if %dokoras < 60 then goto nocoin
                 gosub move 174
                 gosub ferrylogic
             }
@@ -957,7 +985,7 @@ ford:
                 put west
                 waitforre ^Obvious
             }
-  if "$zoneid" = "113" && "$roomid" = "8" then
+  if "$zoneid" = "113" && "$roomid" = "8" then 
             {
                 put north
                 waitforre ^Obvious
@@ -976,18 +1004,26 @@ nocoin:
   put #parse NO COINS!
   Echo ## You don't have enough coins to travel, you vagrant!  Trying to get coins from the nearest bank!!!
   pause
+  put wealth
   pause
   if "$zoneid" = "1" then
         {
             var currencyneeded kro
+            gosub move exchange
+            gosub KRONARS
+            if %kronars >= 40 then goto coin.continue
             gosub move teller
             put withdraw 35 copper
             wait
         }
-  if "$zoneid" = "60" then
+  if "$zoneid" = "60" then gosub move leth
+  if "$zoneid" = "61" then
         {
             var currencyneeded kro
             gosub move 57
+            gosub move exchange
+            gosub KRONARS
+            if %kronars >= 40 then goto coin.continue
             gosub move teller
             put withdraw 35 copper
             wait
@@ -995,6 +1031,9 @@ nocoin:
    if "$zoneid" = "30" then
         {
             var currencyneeded lir
+            gosub move exchange
+            gosub LIRUMS
+            if %lirums >= 70 then goto coin.continue
             gosub move teller
             put withdraw 70 copper
             wait
@@ -1003,6 +1042,9 @@ nocoin:
         {
             var currencyneeded lir
             gosub move 349
+            gosub move exchange
+            gosub LIRUMS
+            if %lirums >= 70 then goto coin.continue
             gosub move teller
             put withdraw 100 copper
             wait
@@ -1014,73 +1056,121 @@ nocoin:
         {
             var currencyneeded lir
             gosub move 211
+            gosub move exchange
+            gosub LIRUMS
+            if %lirums >= 70 then goto coin.continue
             gosub move teller
             put withdraw 70 copper
             wait
         }
+    if "$zoneid" = "113" && "$roomid" = "4" then gosub move 10
+    if "$zoneid" = "113" && "$roomid" = "9" then gosub move 8
+    if "$zoneid" = "114" then
+        {
+            var currencyneeded dok
+            gosub move exchange
+            gosub DOKORAS
+            if %dokoras > 60 then goto coin.continue
+            gosub move teller
+            put withdraw 60 copper
+            wait
+        }
+    if "$zoneid" = "113" && "$roomid" = "6" then gosub move 7
+    if "$zoneid" = "123" then gosub move hibar
+    if "$zoneid" = "116" then
+        {
+            var currencyneeded dok
+            gosub move 1exchange
+            gosub DOKORAS
+            if %dokoras > 60 then goto coin.continue
+            gosub move 1teller
+            put withdraw 60 copper
+            wait
+        }
+     if "$zoneid" = "113" && "$roomid" = "1" then gosub move 5
+     if "$zoneid" = "112" then
+        {
+            var currencyneeded dok
+            gosub move exchange
+            gosub DOKORAS
+            if %dokoras > 60 then goto coin.continue
+            gosub move teller
+            put withdraw 60 copper
+            wait
+        }
+coin.continue:
     put wealth
-    wait
-    pause
-    if %currencyneeded = "kro" && %kronars < 35 then goto coinquit
+    pause 0.5
+    if %currencyneeded = "kro" && %kronars < 40 then goto coinquit
     if %currencyneeded = "lir" && %lirums < 70 then goto coinquit
-    if %currencyneeded = "dok" && %dokoras < 50 then goto coinquit
+    if %currencyneeded = "dok" && %dokoras < 60 then goto coinquit
     put #echo >Log Green You withdrew money to ride the ferry from Zone $zonename!
     ECHO YOU HAD MONEY IN THE BANK, LET'S TRY THIS AGAIN!
     pause
     goto %label
 coinquit:
-  echo YOU DIDN'T HAVE ENOUGH MONEY IN THE BANK TO RIDE PUBLIC TRANSPORT.
-  echo EITHER GET MORE ATHLETICS, OR MORE MONEY, YOU FUCKING NOOB!
+  echo YOU DIDN'T HAVE ENOUGH MONEY IN THE BANK TO RIDE PUBLIC TRANSPORT.  
+  echo EITHER GET MORE ATHLETICS, OR MORE MONEY, FKING NOOB!
   exit
-move.retry:
-  math move.retry add 1
-  if %move.retry > 3 then goto move.fail
-  echo ***
-  echo *** Retrying move to $1 $2 in %move.retry second(s).
-  echo ***
-  pause %move.retry
-  goto move.goto
-move:
-  var move.skip 0
-  var move.retry 0
-  var move.fail 0
-  var move.room $0
-move.goto:
-  #gosub retreat
-  matchre MOVE_RETURN ^YOU HAVE ARRIVED
-  matchre move.skip ^SHOP CLOSED
-  matchre move.retry ^MOVE FAILED
-  matchre move.fail ^DESTINATION NOT FOUND
-  matchre move.retry ^You can't go
-  matchre move.retry ^You're still recovering from your recent attack\.
-  matchre MOVE_RETURN ^You are engaged
-  matchre MOVE_RETURN ^You can't do that while engaged!
-  put #goto %move.room
-  matchwait
-move.fail:
-  var move.fail 1
-  goto MOVE_RETURN
-MOVE_RETURN:
-  pause .1
-  gosub retreat
-  pause .1
-  goto move.retry
-move.skip:
-  var move.skip 1
-retreat:
-  pause .1
-  pause .1
-  send retreat;retreat
-  pause .1
-  pause .1
-  return
-MOVE_RETURN:
-  pause .1
-  pause .1
-  #put #mapper reset
-  pause .1
-  pause .1
-  return
+LIRUMS:
+     var Target.Currency LIRUMS
+     gosub EXCHANGE KRONARS
+     if %lirums >= 70 then goto RETURN
+     gosub EXCHANGE DOKORAS
+     goto EXCHANGE.FINISH
+KRONARS:
+     var Target.Currency KRONARS
+     gosub EXCHANGE LIRUMS
+     if %kronars >= 40 then goto RETURN
+     gosub EXCHANGE DOKORAS
+     goto EXCHANGE.FINISH
+DOKORAS:
+     var Target.Currency DOKORAS
+     gosub EXCHANGE KRONARS
+     if %dokoras >= 60 then goto RETURN
+     gosub EXCHANGE LIRUMS
+     goto EXCHANGE.FINISH
+EXCHANGE:
+     var Coin $0
+EXCHANGE.CONTINUE:
+     pause 0.1
+     matchre EXCHANGE.CONTINUE ^\.\.\.wait\s+\d+\s+sec(?:onds?|s)?\.?|^Sorry\,
+     matchre EXCHANGE.FINISH ^You hand your money to the money-changer\.\s*After collecting a.* fee, .* hands you .*\.
+     matchre EXCHANGE.FINISH ^The money-changer says crossly, \"A transaction that small isn't worth my time\.\s*The minimum is one bronze or ten coppers\.\"
+     matchre EXCHANGE.FINISH ^You count out all of your .* and drop them in the proper jar\.\s*After figuring a .* fee in the ledger beside the jar\, you reach into the one filled with .* and withdraw .*\.
+     matchre EXCHANGE.FINISH ^One of the guards mutters\, \"None of that\, $charactername\.\s*You'd be lucky to get anything at all with an exchange that small\.\"
+     matchre EXCHANGE.FINISH ^But you don't have any .*\.
+     matchre EXCH.INVIS ^How can you exchange money when you can't be seen\?
+     matchre EXCHANGE.SMALLER transactions larger than a thousand
+     matchre EXCHANGE.FINISH ^There is no money-changer here\.
+     put EXCHANGE ALL %Coin FOR %Target.Currency
+     matchwait
+EXCHANGE.SMALLER:
+     pause 0.1
+     pause 0.1
+     matchre EXCHANGE.SMALLER ^\.\.\.wait\s+\d+\s+sec(?:onds?|s)?\.?|^Sorry\,
+     matchre EXCHANGE.SMALLER ^You hand your .* to the money-changer\.\s*After collecting a.* fee, .* hands you .*\.
+     matchre RETURN ^The money-changer says crossly, \"A transaction that small isn't worth my time\.\s*The minimum is one bronze or ten coppers\.\"
+     matchre RETURN ^One of the guards mutters\, \"None of that\, $charactername\.\s*You'd be lucky to get anything at all with an exchange that small\.\"
+     matchre EXCH.INVIS ^How can you exchange money when you can't be seen\?
+     matchre EXCHANGE.CONTINUE ^You count out all of your .* and drop them in the proper jar\.\s*After figuring a .* fee in the ledger beside the jar\, you reach into the one filled with .* and withdraw .*\.
+     matchre EXCHANGE.CONTINUE ^But you don't have any .*\.
+     matchre EXCHANGE.CONTINUE ^You don't have that many
+     matchre EXCHANGE.FINISH ^There is no money-changer here\.
+     put EXCHANGE 1000 plat %Coin FOR %Target.Currency
+     matchwait
+EXCHANGE.FINISH:
+     put wealth
+     pause 0.5
+     RETURN
+EXCH.INVIS:
+     pause 0.1
+     send hum scale
+     pause 0.5
+     send stop hum
+     pause 0.1
+     goto EXCHANGE.CONTINUE
+     
 ferrylogic:
   if contains("(1|7|30|60|40|113)","$zoneid" then goto ferry
   if "$zoneid" = "66" then
@@ -1105,7 +1195,7 @@ gondola:
   pause 10
   goto gondola
 ongondola:
-  pause
+  pause 
   pause
   if "%direction" = "north" then put north
   else put south
@@ -1145,33 +1235,62 @@ offtheride:
   put #mapper reset
   return
 
-nodestination:
-  Echo ## Either you did not enter a destination, or your destination is not recognized.  Please try again! ##
-  Echo ## Valid Destinations are: ##
-  Echo -------------------------------------------
-  Echo ## Zoluren:
-  Echo ## Crossing | Arthe Dale | Tiger Clan ##
-  Echo ## Wolf Clan | Dirge | Leth Deriel ##
-  Echo ## Knife Clan | Acenemacra | Kaerna Village ##
-  Echo ## Stone Clan | Ilaya Taipa | Misenseor ##
-  Echo ## Sorrow's Reach | Vipers, Guardians, Leucros ##
-  Echo -------------------------------------------
-  Echo ## Therengia:
-  Echo ## Riverhaven | Rossmans | Therenborough ##
-  Echo ## Langenfirth | El'Bains | Rakash Village ##
-  Echo ## Fornsted | Zaulfung ##
-  Echo -------------------------------------------
-  Echo ## Ilithi:
-  Echo ## Shard | Horse Clan | Fayrin's Rest ##
-  Echo ## Steelclaw Clan | Spire |Corik's Wall ##
-  Echo ## Ylono ##
-  Echo -------------------------------------------
-  Echo ## Forfedhdar:
-  Echo ## Raven's Point | Ain Ghazal| Outer Hib ##
-  Echo ## Inner Hib | Hibarnhvidar |Boar Clan ##
-  Echo -------------------------------------------
-  exit
-
+## Movement 
+move.retry:
+  math move.retry add 1
+  if %move.retry > 3 then goto move.fail
+  echo ***
+  echo *** Retrying move to $1 $2 in %move.retry second(s).
+  echo ***
+  pause %move.retry
+  goto move.goto
+move:
+  delay 0.0001
+  var move.skip 0
+  var move.retry 0
+  var move.fail 0
+  var move.room $0
+move.goto:
+  #gosub retreat
+  matchre move.goto ^\.\.\.wait|^Sorry\,
+  matchre move.return ^YOU HAVE ARRIVED
+  matchre move.skip ^SHOP CLOSED
+  matchre move.retry ^MOVE FAILED
+  matchre move.fail ^DESTINATION NOT FOUND
+  matchre move.retry ^You can't go
+  matchre move.retry ^You're still recovering from your recent attack\.
+  matchre move.retreat ^You are engaged
+  matchre move.retreat ^You can't do that while engaged\!
+  put #goto %move.room
+  matchwait
+move.fail:
+  var move.fail 1
+  goto move.return
+move.retreat:
+  pause 0.1
+  gosub retreat
+  pause 0.1
+  goto move.retry
+move.skip:
+  var move.skip 1
+retreat:
+  pause 0.1
+  pause 0.1
+  send retreat;retreat
+  pause 0.1
+  pause 0.1
+  return
+move.return:
+  pause 0.1
+  pause 0.1
+  #put #mapper reset
+  pause 0.1
+  pause 0.1
+  return
+RETURN:
+  delay 0.001
+  RETURN
+  
 MOVE_RANDOM:
      delay 0.0001
      random 1 13
@@ -1235,13 +1354,9 @@ MOVE_RANDOM:
      if (%Exits > 1) && ("%Last.Direction" = "%Reverse.Direction") then goto MOVE_RANDOM
      #
      var Last.Direction %Direction
-     # Trigger to set variable for occupied room, when roaming.
-     action instant var Occupied 1 when ^Also here\:|^Also in the room\:
-     var Occupied 0
      gosub MOVE_RESUME
-     #if (%Occupied) then goto MOVE_RANDOM
      RETURN
-
+     
 MOVEIT:
      delay 0.0001
      var Direction $0
@@ -1257,7 +1372,7 @@ MOVE_RESUME:
      matchre MOVE_RESUME ^You work
      matchre MOVE_RESUME make much headway
      matchre MOVE_RESUME ^You flounder around in the water\.
-     matchre MOVE_RETURN ^You are engaged to .*\!
+     matchre MOVE_RETREAT ^You are engaged to .*\!|^You cannot do that while engaged
      matchre MOVE_STAND ^You start up the .*\, but slip after a few feet and fall to the ground\!\s*You are unharmed but feel foolish\.
      matchre MOVE_STAND ^Running heedlessly over the rough terrain\, you trip over an exposed root and land face first in the dirt\.
      matchre MOVE_STAND ^You can't do that while lying down\.
@@ -1274,8 +1389,8 @@ MOVE_RESUME:
      matchre MOVE_FAILED ^You can't go there
      matchre MOVE_FAILED ^I could not find what you were referring to\.
      matchre MOVE_FAILED ^What were you referring to\?
-     matchre MOVE_RETURN ^It's pitch dark
-     matchre MOVE_RETURN ^Obvious
+     matchre MOVE_END ^It's pitch dark
+     matchre MOVE_END ^Obvious
      send %Direction
      matchwait
 MOVE_STAND:
@@ -1284,16 +1399,16 @@ MOVE_STAND:
      matchre MOVE_STAND ^You are overburdened and cannot manage to stand\.
      matchre MOVE_STAND ^The weight
      matchre MOVE_STAND ^You try
-     matchre MOVE_RETURN ^You are already standing\.
-     matchre MOVE_RETURN ^You stand(?:\s*back)? up\.
-     matchre MOVE_RETURN ^You stand up\.
+     matchre MOVE_RETREAT ^You are already standing\.
+     matchre MOVE_RETREAT ^You stand(?:\s*back)? up\.
+     matchre MOVE_RETREAT ^You stand up\.
      send stand
      matchwait
-MOVE_RETURN:
+MOVE_RETREAT:
      pause 0.1
-     matchre MOVE_RETURN ^\.\.\.wait|^Sorry\,
-     matchre MOVE_RETURN ^You retreat back to pole range\.
-     matchre MOVE_RETURN ^You try to back away
+     matchre MOVE_RETREAT ^\.\.\.wait|^Sorry\,
+     matchre MOVE_RETREAT ^You retreat back to pole range\.
+     matchre MOVE_RETREAT ^You try to back away
      matchre MOVE_STAND ^You must stand first\.
      matchre MOVE_RESUME ^You retreat from combat\.
      matchre MOVE_RESUME ^You are already as far away as you can get\!
@@ -1332,5 +1447,33 @@ MOVE_FAIL_BAIL:
      put #parse MOVE FAILED
      gosub clear
      goto %LAST
-MOVE_RETURN:
+MOVE_END:
+     pause 0.0001
      RETURN
+     
+nodestination:
+  Echo ## Either you did not enter a destination, or your destination is not recognized.  Please try again! ##
+  Echo ## Valid Destinations are: ##
+  Echo -------------------------------------------
+  Echo ## Zoluren:
+  Echo ## Crossing | Arthe Dale | Tiger Clan ##
+  Echo ## Wolf Clan | Dirge | Leth Deriel ##
+  Echo ## Knife Clan | Acenemacra | Kaerna Village ##
+  Echo ## Stone Clan | Ilaya Taipa | Misenseor ##
+  Echo ## Sorrow's Reach | Vipers, Guardians, Leucros ##
+  Echo -------------------------------------------
+  Echo ## Therengia:
+  Echo ## Riverhaven | Rossmans | Therenborough ##
+  Echo ## Langenfirth | El'Bains | Rakash Village ##
+  Echo ## Fornsted | Zaulfung ##
+  Echo -------------------------------------------
+  Echo ## Ilithi:
+  Echo ## Shard | Horse Clan | Fayrin's Rest ##
+  Echo ## Steelclaw Clan | Spire |Corik's Wall ##
+  Echo ## Ylono ##
+  Echo -------------------------------------------
+  Echo ## Forfedhdar:
+  Echo ## Raven's Point | Ain Ghazal| Outer Hib ##
+  Echo ## Inner Hib | Hibarnhvidar |Boar Clan ##
+  Echo -------------------------------------------
+  exit
