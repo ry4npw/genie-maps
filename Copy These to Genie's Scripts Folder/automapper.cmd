@@ -307,6 +307,7 @@ skate.no:
      var slow_on_ice 1
      var wearingskates 0
      action (failed) on
+     echo **** No ice skate support for you! Collect rocks like the other peasants.
      RETURN
 skate.yes:
      echo *** Success! ***
@@ -319,7 +320,6 @@ footwear.check:
      put inv feet
      matchwait 8
      echo **** Error! Do not recognize your footwear!
-     echo **** No ice skate support for you! Collect rocks like the other peasants.
      goto skate.no
 footware.remove:
      var item $0
@@ -353,7 +353,7 @@ ice.collect:
      matchwait
 ice.return:
      var slow_on_ice 0
-     pause 0.1
+     pause 20
      action (mapper) on
      return
 move.knock:
