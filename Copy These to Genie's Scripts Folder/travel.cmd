@@ -89,7 +89,7 @@ wait
 send exp 0
 wait
 put #var save
-if "%destination" = "" then goto nodestination
+if "%destination" = "" then goto NODESTINATION
 if ("$zoneid" = "0") || ("$roomid" = "0") then 
      {
           echo ### Unknown map or room id - Attempting to move in random direction to recover
@@ -267,7 +267,7 @@ if matchre("(inn|inne|inner)","%destination") then
           goto FORD
      }
 if matchre("(boa|boar)","%destination") then goto FORD
-goto nodestination
+goto NODESTINATION
   
 # TRAVEL
 CROSSING:
@@ -1186,7 +1186,7 @@ FERRYLOGIC:
             var direction south
             goto GONDOLA
         }
-  else goto nodestination
+  else goto NODESTINATION
 GONDOLA:
   pause .1
   pause .1
@@ -1453,7 +1453,7 @@ MOVE_END:
      pause 0.0001
      RETURN
 
-nodestination:
+NODESTINATION:
   Echo ## Either you did not enter a destination, or your destination is not recognized.  Please try again! ##
   Echo ## Valid Destinations are: ##
   Echo -------------------------------------------
