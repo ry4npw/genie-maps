@@ -1,4 +1,4 @@
-#debug 5
+#debuglevel 10
 # Script to Travel #
 # Written by Chris/Achilles #
 # Requires EXP Plugin by VTCifer #
@@ -45,6 +45,9 @@
 ##    RANKS TO USE UNDER-SEGOLTHA(THIEF)##
     var undersegoltha 65
 ##########################################
+
+put #echo >Log travel script departure from $zonename (map $zoneid: room $roomid)
+
 TOP:
 if "shardcitizen" = "yes" then
      {
@@ -89,8 +92,8 @@ wait
 send exp 0
 wait
 put #var save
-if "%destination" = "" then goto NODESTINATION
-if ("$zoneid" = "0") || ("$roomid" = "0") then 
+if "%destination" = "" then goto nodestination
+if ("$zoneid" = "0") || ("$roomid" = "0") then
      {
           echo ### Unknown map or room id - Attempting to move in random direction to recover
           gosub MOVE_RANDOM
@@ -98,7 +101,7 @@ if ("$zoneid" = "0") || ("$roomid" = "0") then
 pause 0.1
 if ("$zoneid" = "0") || ("$roomid" = "0") then gosub MOVE_RANDOM
 pause 0.1
-if "$zoneid" = "0" then 
+if "$zoneid" = "0" then
      {
           ECHO ### You are in a spot not recognized by Genie, please start somewhere else! ###
           exit
@@ -267,8 +270,8 @@ if matchre("(inn|inne|inner)","%destination") then
           goto FORD
      }
 if matchre("(boa|boar)","%destination") then goto FORD
-goto NODESTINATION
-  
+goto nodestination
+
 # TRAVEL
 CROSSING:
   var label CROSSING
@@ -402,7 +405,7 @@ CROSSING:
                         gosub MOVE 394
                         if $Perception.Ranks > 150 then gosub MOVE 5
                     }
-                if "%detour" = "sorrow" then 
+                if "%detour" = "sorrow" then
                     {
                         gosub MOVE 397
                         gosub MOVE 77
@@ -434,7 +437,7 @@ CROSSING:
                         gosub MOVE 476
                         gosub MOVE 30
                     }
-                if "$zoneid" = "1" then 
+                if "$zoneid" = "1" then
                     {
                         if %kronars < 40 then goto NOCOIN
                         gosub MOVE 236
@@ -537,7 +540,7 @@ ILITHI:
                         gosub MOVE 476
                         gosub MOVE 30
                     }
-                if "$zoneid" = "1" then 
+                if "$zoneid" = "1" then
                     {
                         if %kronars < 40 then goto NOCOIN
                         gosub MOVE 236
@@ -555,7 +558,7 @@ ILITHI:
   if "$zoneid" = "61" then gosub MOVE 130
   if "$zoneid" = "63" then gosub MOVE 112
   if "$zoneid" = "62" && $Athletics.Ranks >= %undergondola then gosub MOVE 153
-  if "$zoneid" = "62" then 
+  if "$zoneid" = "62" then
             {
                 gosub MOVE 2
                 gosub FERRYLOGIC
@@ -794,7 +797,7 @@ THERENGIA:
             }
   if "$zoneid" = "40" && matchre("(haven|zaulfung)","%detour") then
             {
-                if $Athletics.Ranks >= %rossmansouth then 
+                if $Athletics.Ranks >= %rossmansouth then
                     {
                         gosub MOVE 213
                         gosub MOVE 15
@@ -887,7 +890,7 @@ FORD:
                         gosub MOVE 476
                         gosub MOVE 30
                     }
-                if "$zoneid" = "1" then 
+                if "$zoneid" = "1" then
                     {
                         if %kronars < 40 then goto NOCOIN
                         gosub MOVE 236
@@ -935,7 +938,7 @@ FORD:
             {
                 gosub MOVE 153
             }
-  if "$zoneid" = "62" then 
+  if "$zoneid" = "62" then
             {
                 gosub MOVE 2
                 gosub FERRYLOGIC
@@ -988,7 +991,7 @@ FORD:
                 put west
                 waitforre ^Obvious
             }
-  if "$zoneid" = "113" && "$roomid" = "8" then 
+  if "$zoneid" = "113" && "$roomid" = "8" then
             {
                 put north
                 waitforre ^Obvious
@@ -1002,6 +1005,7 @@ ARRIVED:
   put #parse REACHED YOUR DESTINATION
   #put #play Just Arrived.wav
   Echo ##  YOU ARRIVED AT YOUR DESTINATION In %t seconds!  That's FAST! ##
+  put #echo >Log travel script arrival at $zonename (map $zoneid: room $roomid)
   exit
 NOCOIN:
   put #parse NO COINS!
@@ -1112,7 +1116,7 @@ COIN.CONTINUE:
     pause
     goto %label
 COINQUIT:
-  echo YOU DIDN'T HAVE ENOUGH MONEY IN THE BANK TO RIDE PUBLIC TRANSPORT.  
+  echo YOU DIDN'T HAVE ENOUGH MONEY IN THE BANK TO RIDE PUBLIC TRANSPORT.
   echo EITHER GET MORE ATHLETICS, OR MORE MONEY, FKING NOOB!
   exit
 LIRUMS:
@@ -1173,7 +1177,7 @@ EXCH.INVIS:
      send stop hum
      pause 0.1
      goto EXCHANGE.CONTINUE
-     
+
 FERRYLOGIC:
   if contains("(1|7|30|60|40|113)","$zoneid" then goto ferry
   if "$zoneid" = "66" then
@@ -1186,7 +1190,7 @@ FERRYLOGIC:
             var direction south
             goto GONDOLA
         }
-  else goto NODESTINATION
+  else goto nodestination
 GONDOLA:
   pause .1
   pause .1
@@ -1198,7 +1202,7 @@ GONDOLA:
   pause 10
   goto GONDOLA
 ONGONDOLA:
-  pause 
+  pause
   pause
   if "%direction" = "north" then put north
   else put south
@@ -1238,7 +1242,7 @@ OFFTHERIDE:
   put #mapper reset
   return
 
-## Movement 
+## Movement
 MOVE.RETRY:
   math move.retry add 1
   if %move.retry > 3 then goto move.fail
@@ -1292,7 +1296,7 @@ MOVE.RETURN:
 RETURN:
   delay 0.001
   RETURN
-  
+
 MOVE_RANDOM:
      delay 0.0001
      random 1 13
@@ -1358,7 +1362,7 @@ MOVE_RANDOM:
      var Last.Direction %Direction
      gosub MOVE_RESUME
      RETURN
-     
+
 MOVEIT:
      delay 0.0001
      var Direction $0
@@ -1453,7 +1457,7 @@ MOVE_END:
      pause 0.0001
      RETURN
 
-NODESTINATION:
+nodestination:
   Echo ## Either you did not enter a destination, or your destination is not recognized.  Please try again! ##
   Echo ## Valid Destinations are: ##
   Echo -------------------------------------------
