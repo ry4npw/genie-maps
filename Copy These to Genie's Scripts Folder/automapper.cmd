@@ -1,5 +1,11 @@
-# automapper.cmd version 5.0
-# last changed: October 14th, 2017
+put #class racial on
+put #class rp on
+put #class arrive off
+put #class combat off
+put #class joust off
+
+# automapper.cmd version 6.0
+# last changed: October 23, 2017
 
 # Added handler for attempting to enter closed shops from Shroomism
 # Added web retry support from Dasffion
@@ -28,13 +34,13 @@
 # Added additional catches for closed shops
 # Added support for knocking on a town gate (Shard) during Night to get in. (Need to add checks for Non-Citizens, may cause problems with non-citizens)
 # Added catches for trying to go through gate while invisible or with a cloak concealing face.
-# Added support for climbing with ropes 
+# Added support for climbing with ropes
 # Added matches for Theren tunnels so script does not get stuck in infinite loop trying to stand
 # Added catch for Shard citizens now being able to enter closed shops at night
-# Added stamina support for Aesry stairs - Will cast fatigue recovery buffs if possible and pause to wait for stamina 
+# Added stamina support for Aesry stairs - Will cast fatigue recovery buffs if possible and pause to wait for stamina
 
 # 2017-11-13 - Shroom - Synced changes and updates from TF and Prime versions -  To make compatible across both instances
-# Added ICE SKATE support for Ice Road - Checks for ice skates and wears them during ice road, also checks your footwear and puts it back on after 
+# Added ICE SKATE support for Ice Road - Checks for ice skates and wears them during ice road, also checks your footwear and puts it back on after
 # Added support for Stowing foot item when you have an item stuck at your feet
 
 # Related macros
