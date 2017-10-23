@@ -343,6 +343,8 @@ footwear.none:
 ice.collect.p:
      pause .5
 ice.collect:
+     pause 0.1
+     echo *** Collecting rocks and pausing so we don't slip and crack our head open
      action (mapper) off
      matchre ice.collect ^\.\.\.wait\s+\d+\s+sec(?:onds?|s)?\.?
      matchre ice.collect ^Sorry\,
