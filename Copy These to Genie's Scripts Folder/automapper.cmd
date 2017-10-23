@@ -59,7 +59,7 @@
 # The following will use a global to set it by character.  This helps when you have both premium and standard accounts.
 # Standard Account = 1, Premium Account = 2, LTB Premium = 3
 # #var automapper.typeahead 1
-# debuglevel 10
+#debuglevel 5
 put #class racial on
 put #class rp on
 put #class arrive off
@@ -86,7 +86,6 @@ ABSOLUTE_TOP:
      var slow_on_ice 0
      var wearingskates 0
      var move_OK ^Obvious (paths|exits)|^It's pitch dark
-     var move_FAIL ^You can't go there|^What were you referring to|^I could not find what you were referring to\.|^You can't sneak in that direction|^You can't ride your.+(broom|carpet) in that direction|^You can't ride your.+(broom|carpet) in that direction|^You can't ride that way\.$
      var move_RETRY ^\.\.\.wait|^Sorry, you may only|^Sorry, system is slow|^You can't ride your.+(broom|carpet) in that direction|^You can't ride your.+(broom|carpet) in that direction|^The weight of all|lose your balance during the effort|^You are still stunned|^You're still recovering from your recent
      var move_RETREAT ^You are engaged to|^You try to move, but you're engaged|^While in combat|^You can't do that while engaged
      var move_WEB ^You can't do that while entangled in a web
@@ -110,6 +109,7 @@ ABSOLUTE_TOP:
      goto loop
      # ---------------
 actions:
+     action (failed) var move_FAIL when ^You can't go there|^What were you referring to|^I could not find what you were referring to\.|^You can't sneak in that direction|^You can't ride your.+(broom|carpet) in that direction|^You can't ride your.+(broom|carpet) in that direction|^You can't ride that way\.$
      action (mapper) if %movewait = 0 then shift;if %movewait = 0 then math depth subtract 1;if len("%2") > 0 then echo Next move: %2 when %move_OK
      action (mapper) goto move.failed when %move_FAIL
      action (mapper) goto move.retry when %move_RETRY|%move_WEB
@@ -297,6 +297,7 @@ move.ice:
      goto move.done
 skate.check:
      var checked 1
+     action (failed) off
      echo *** Checking for Ice Skates! ***
      matchre skate.yes ^You tap
      matchre skate.no ^I could not|^What were you
@@ -305,6 +306,7 @@ skate.check:
 skate.no:
      var slow_on_ice 1
      var wearingskates 0
+     action (failed) on
      RETURN
 skate.yes:
      echo *** Success! ***
