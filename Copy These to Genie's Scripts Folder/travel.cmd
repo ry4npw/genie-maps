@@ -51,7 +51,7 @@ put #class joust off
     var undersegoltha 65
 ##########################################
 
-put #echo >Log travel script departure from $zonename (map $zoneid: room $roomid)
+put #echo >Log Travel script departure from $zonename (map $zoneid: room $roomid)
 
 TOP:
 if "shardcitizen" = "yes" then
@@ -74,12 +74,12 @@ if $joined = 1 then
           var shardcitizen no
           Echo ### You are in a group!  You will NOT be taking the gravy short cuts today! ###
      }
+action goto NOCOIN when ^\"Hey\,\" he says\, \"You haven\'t
 action var offtransport pier when the Riverhaven pier\.
 action var offtransport wharf when the Langenfirth wharf\.
 action var offtransport dock when \[\"Her Opulence\"\]|\[\"Hodierna\'s Grace\"\]|\[\"Kertigen\'s Honor\"\]|\[\"His Daring Exploit\"\]|\[The Evening Star\]|\[The Damaris\' Kiss\]|\[A Birch Skiff\]|\[A Highly Polished Skiff\]|Baso Docks|
 action put fatigue when ^You can see a ferry approaching on the left side.|^The ferry|^A kingfisher|^A burst of|^The Elven|^The skiff|^The polemen|^Small waves|^The sturdy stone|^You are about a fourth of the way across\.|^The ferry moves away\, nearly out of view\.|ferry passing you on the left\.|^You are nearing the docks\.|^A swarm of eels passes beneath the keel\, probably on their way to the river\'s fresh water to spawn\.|followed by the clatter of wood on wood\.|^A family of dolphins leaps from the water beside the galley\.|^Some geese in a perfect V fly north high overhead\.|^Some small blue sharks slide past through the water\.|^A sailor walks by with a coil of rope\.|^A green turtle as large as a tower shield swims past\,|^You are nearing the docks\.|A drumbeat sounds through the ship\.|^You are about a fourth of the way across\.|^A galley comes into sight\, its oars beating rhythmically\.|^The galley moves away\, the beat of its drum slowly fading\.|^For a few minutes\, the drumbeat from below is echoed across the water by the beat from the galley passing on the left\.|The door swings shut of its own accord, and the gondola pushes off\.|The platform vanishes against the ridgeline\.|The gondola arrives at the center of the chasm\, and keeps heading (north|south)\.|The cab trundles on along as the ropes overhead creak and moan\.|The ropes creak as the gondola continues (north|south)\.|^The gondola creaks as a wind pushes it back and forth\.|^You hear a bell ring out three times|^The barge|^Several oars pull|^All that is visible|^The opposite bank|^A few of the other passengers|^The shore disappears
 action put look when ^Your destination
-action goto NOCOIN when ^\"Hey\,\" he says\, \"You haven\'t
 action put #var Guild $1 when Guild\: (\S+)
 action put #var Circle $1 when Circle\: (\d+)
 action var kronars 0 when No Kronars\.
@@ -97,18 +97,22 @@ put #mapper reset
 pause 0.5
 send info
 wait
+pause 0.1
 send exp 0
 wait
+pause 0.1
 put #var save
-if "%destination" = "" then goto nodestination
+if "%destination" = "" then goto NODESTINATION
 if ("$zoneid" = "0") || ("$roomid" = "0") then
      {
           echo ### Unknown map or room id - Attempting to move in random direction to recover
           gosub MOVE_RANDOM
      }
-pause 0.1
+pause 0.001
+pause 0.001
 if ("$zoneid" = "0") || ("$roomid" = "0") then gosub MOVE_RANDOM
-pause 0.1
+pause 0.001
+pause 0.001
 if "$zoneid" = "0" then
      {
           ECHO ### You are in a spot not recognized by Genie, please start somewhere else! ###
@@ -278,7 +282,7 @@ if matchre("(inn|inne|inner)","%destination") then
           goto FORD
      }
 if matchre("(boa|boar)","%destination") then goto FORD
-goto nodestination
+goto NODESTINATION
 
 # TRAVEL
 CROSSING:
@@ -449,7 +453,7 @@ CROSSING:
                     }
                 if "$zoneid" = "1" then
                     {
-                        if %kronars < 40 then goto NOCOIN
+                        if %kronars < 50 then goto NOCOIN
                         gosub MOVE 236
                         gosub FERRYLOGIC
                     }
@@ -552,7 +556,7 @@ ILITHI:
                     }
                 if "$zoneid" = "1" then
                     {
-                        if %kronars < 40 then goto NOCOIN
+                        if %kronars < 50 then goto NOCOIN
                         gosub MOVE 236
                         gosub FERRYLOGIC
                     }
@@ -704,7 +708,7 @@ THERENGIA:
   if "$zoneid" = "60" && $Athletics.Ranks >= %segoltha then gosub MOVE 108
   if "$zoneid" = "60" && $Athletics.Ranks < %segoltha then
             {
-                if %kronars < 40 then goto NOCOIN
+                if %kronars < 50 then goto NOCOIN
                 gosub MOVE 42
                 pause
                 gosub FERRYLOGIC
@@ -903,7 +907,7 @@ FORD:
                     }
                 if "$zoneid" = "1" then
                     {
-                        if %kronars < 40 then goto NOCOIN
+                        if %kronars < 50 then goto NOCOIN
                         gosub MOVE 236
                         gosub FERRYLOGIC
                     }
@@ -919,8 +923,7 @@ FORD:
                 if %dokoras < 60 then goto NOCOIN
                 gosub MOVE 4
                 gosub FERRYLOGIC
-                send west
-                wait
+                gosub MOVEIT west
             }
   if "$zoneid" = "63" && $Athletics.Ranks < %undergondola then
             {
@@ -999,13 +1002,12 @@ FORD:
             }
   if "$zoneid" = "113" && "$roomid" = "4" then
             {
-                put west
+                gosub MOVEIT west
                 waitforre ^Obvious
             }
   if "$zoneid" = "113" && "$roomid" = "8" then
             {
-                put north
-                waitforre ^Obvious
+                gosub MOVEIT north
             }
   if "$zoneid" = "114" && "%detour" = "ain" then gosub MOVE 34
   if "$zoneid" = "116" then gosub MOVE 217
@@ -1016,13 +1018,76 @@ ARRIVED:
   put #parse REACHED YOUR DESTINATION
   #put #play Just Arrived.wav
   Echo ##  YOU ARRIVED AT YOUR DESTINATION In %t seconds!  That's FAST! ##
-  put #echo >Log travel script arrival at $zonename (map $zoneid: room $roomid)
+  put #echo >Log Travel script arrival at: $zonename (map $zoneid: room $roomid)
   put #class arrive off
-  exit
+  EXIT
+  
+## ENGINE
+FERRYLOGIC:
+  if contains("(1|7|30|60|40|113)","$zoneid" then goto FERRY
+  if "$zoneid" = "66" then
+        {
+            var direction north
+            goto GONDOLA
+        }
+  if "$zoneid" = "62" then
+        {
+            var direction south
+            goto GONDOLA
+        }
+  else goto NODESTINATION
+GONDOLA:
+  pause 0.1
+  pause 0.1
+  send look
+  pause 2
+  matchre ONGONDOLA \[Gondola\,
+  if matchre ("$roomobjs","gondola") then send go gondola
+  matchwait 2
+  pause 7
+  goto GONDOLA
+ONGONDOLA:
+  pause
+  pause
+  if "%direction" = "north" then gosub MOVEIT north
+  else gosub MOVEIT south
+GONDOLAWAIT:
+  pause
+  waitforre ^With a soft
+  gosub MOVEIT out
+  pause
+  put #mapper reset
+  RETURN
+FERRY:
+  pause 0.1
+  pause 0.1
+  ## Future money stuff - "Hey," he says, "You haven't got enough lirums to pay for your trip.  Come back when you can afford the fare."
+  matchre ONFERRY \[\"Her Opulence\"\]|\[\"Hodierna\'s Grace\"\]|\[\"Kertigen\'s Honor\"\]|\[\"His Daring Exploit\"\]|\[\"Northern Pride\"\, Main Deck\]|\[\"Theren\'s Star\"\, Deck\]|\[The Evening Star\]|\[The Damaris\' Kiss\]|\[A Birch Skiff\]|\[A Highly Polished Skiff\]
+  send look
+  if matchre ("$roomobjs","Star") then send go ferry
+  if matchre ("$roomobjs","skiff") then send go skiff
+  if matchre ("$roomobjs","Kiss") then send go ferry
+  if matchre ("$roomobjs","ferry") then send go ferry
+  if matchre ("$roomobjs","barge") then send go barge
+  matchwait 2
+  pause 10
+  goto FERRY
+ONFERRY:
+  pause 0.1
+  pause 0.1
+  matchre OFFTHERIDE dock and its crew ties the (ferry|barge) off\.|^You come to a very soft stop|^The skiff lightly taps
+  matchwait
+OFFTHERIDE:
+  pause
+  put go %offtransport
+  pause
+  put #mapper reset
+  RETURN
+  
 NOCOIN:
   put #parse NO COINS!
-  Echo ## You don't have enough coins to travel, you vagrant!  Trying to get coins from the nearest bank!!!
-  pause
+  Echo ### You don't have enough coins to travel, you vagrant!  Trying to get coins from the nearest bank!!!
+  pause 0.5
   put wealth
   pause
   if "$zoneid" = "1" then
@@ -1030,7 +1095,7 @@ NOCOIN:
             var currencyneeded kro
             gosub MOVE exchange
             gosub KRONARS
-            if %kronars >= 40 then goto COIN.CONTINUE
+            if %kronars >= 50 then goto COIN.CONTINUE
             gosub MOVE teller
             put withdraw 35 copper
             wait
@@ -1042,7 +1107,7 @@ NOCOIN:
             gosub MOVE 57
             gosub MOVE exchange
             gosub KRONARS
-            if %kronars >= 40 then goto COIN.CONTINUE
+            if %kronars >= 50 then goto COIN.CONTINUE
             gosub MOVE teller
             put withdraw 35 copper
             wait
@@ -1117,37 +1182,39 @@ NOCOIN:
             put withdraw 60 copper
             wait
         }
-COIN.CONTINUE:
     put wealth
     pause 0.5
-    if %currencyneeded = "kro" && %kronars < 40 then goto COINQUIT
+    if %currencyneeded = "kro" && %kronars < 50 then goto COINQUIT
     if %currencyneeded = "lir" && %lirums < 70 then goto COINQUIT
     if %currencyneeded = "dok" && %dokoras < 60 then goto COINQUIT
-    put #echo >Log Green You withdrew money to ride the ferry from Zone $zonename!
+    put #echo >Log Green You withdrew some money to ride the ferry from Zone $zonename!
     ECHO YOU HAD MONEY IN THE BANK, LET'S TRY THIS AGAIN!
     pause
     goto %label
+COIN.CONTINUE:
+    put #echo >Log Green You exchanged some money to ride the ferry from Zone $zonename!
+    ECHO YOU EXCHANGED SOME MONIES, LET'S TRY THIS AGAIN!
+    pause
+    goto %label     
 COINQUIT:
   echo YOU DIDN'T HAVE ENOUGH MONEY IN THE BANK TO RIDE PUBLIC TRANSPORT.
   echo EITHER GET MORE ATHLETICS, OR MORE MONEY, FKING NOOB!
+  put #echo >Log Red Travel Script Aborted! No money in bank to ride ferry in $zonename! 
   exit
 LIRUMS:
      var Target.Currency LIRUMS
-     gosub EXCHANGE KRONARS
-     if %lirums >= 70 then goto RETURN
-     gosub EXCHANGE DOKORAS
+     if ("%kronars" != "0") then gosub EXCHANGE KRONARS
+     if ("%dokoras" != "0") then gosub EXCHANGE DOKORAS
      goto EXCHANGE.FINISH
 KRONARS:
      var Target.Currency KRONARS
-     gosub EXCHANGE LIRUMS
-     if %kronars >= 40 then goto RETURN
-     gosub EXCHANGE DOKORAS
+     if ("%lirums" != "0" then gosub EXCHANGE LIRUMS
+     if ("%dokoras" != "0" then gosub EXCHANGE DOKORAS
      goto EXCHANGE.FINISH
 DOKORAS:
      var Target.Currency DOKORAS
-     gosub EXCHANGE KRONARS
-     if %dokoras >= 60 then goto RETURN
-     gosub EXCHANGE LIRUMS
+     if ("%kronars" != "0" then gosub EXCHANGE KRONARS
+     if ("%lirums" != "0" then gosub EXCHANGE LIRUMS
      goto EXCHANGE.FINISH
 EXCHANGE:
      var Coin $0
@@ -1179,6 +1246,7 @@ EXCHANGE.SMALLER:
      put EXCHANGE 1000 plat %Coin FOR %Target.Currency
      matchwait
 EXCHANGE.FINISH:
+     pause 0.001
      put wealth
      pause 0.5
      RETURN
@@ -1189,67 +1257,6 @@ EXCH.INVIS:
      send stop hum
      pause 0.1
      goto EXCHANGE.CONTINUE
-
-FERRYLOGIC:
-  if contains("(1|7|30|60|40|113)","$zoneid" then goto FERRY
-  if "$zoneid" = "66" then
-        {
-            var direction north
-            goto GONDOLA
-        }
-  if "$zoneid" = "62" then
-        {
-            var direction south
-            goto GONDOLA
-        }
-  else goto nodestination
-GONDOLA:
-  pause .1
-  pause .1
-  send look
-  pause 3
-  matchre ONGONDOLA \[Gondola\,
-  if matchre ("$roomobjs","gondola") then send go gondola
-  matchwait 2
-  pause 10
-  goto GONDOLA
-ONGONDOLA:
-  pause
-  pause
-  if "%direction" = "north" then put north
-  else put south
-GONDOLAWAIT:
-  pause
-  waitforre ^With a soft
-  put out
-  pause
-  put #mapper reset
-  return
-FERRY:
-  pause .1
-  pause .1
-  ## Future money stuff - "Hey," he says, "You haven't got enough lirums to pay for your trip.  Come back when you can afford the fare."
-  matchre ONFERRY \[\"Her Opulence\"\]|\[\"Hodierna\'s Grace\"\]|\[\"Kertigen\'s Honor\"\]|\[\"His Daring Exploit\"\]|\[\"Northern Pride\"\, Main Deck\]|\[\"Theren\'s Star\"\, Deck\]|\[The Evening Star\]|\[The Damaris\' Kiss\]|\[A Birch Skiff\]|\[A Highly Polished Skiff\]
-  send look
-  if matchre ("$roomobjs","Star") then send go ferry
-  if matchre ("$roomobjs","skiff") then send go skiff
-  if matchre ("$roomobjs","Kiss") then send go ferry
-  if matchre ("$roomobjs","ferry") then send go ferry
-  if matchre ("$roomobjs","barge") then send go barge
-  matchwait 2
-  pause 10
-  goto FERRY
-ONFERRY:
-  pause .1
-  pause .1
-  matchre OFFTHERIDE dock and its crew ties the (ferry|barge) off\.|^You come to a very soft stop|^The skiff lightly taps
-  matchwait
-OFFTHERIDE:
-  pause
-  put go %offtransport
-  pause
-  put #mapper reset
-  return
 
 ## Movement
 MOVE.RETRY:
@@ -1295,13 +1302,13 @@ RETREAT:
   send retreat;retreat
   pause 0.1
   pause 0.1
-  return
+  RETURN
 MOVE.RETURN:
   pause 0.1
   pause 0.001
   #put #mapper reset
   pause 0.001
-  return
+  RETURN
 RETURN:
   delay 0.001
   RETURN
@@ -1365,7 +1372,7 @@ MOVE_RANDOM:
      if matchre("$roomobjs","doorway|door") then math Exits add 1
      if matchre("$roomobjs","archway|arch") then math Exits add 1
      #
-     # don't move "back" on a path unless we hit a dead end
+     # don't move "back" on a path unless we'we hit a dead end
      if (%Exits > 1) && ("%Last.Direction" = "%Reverse.Direction") then goto MOVE_RANDOM
      #
      var Last.Direction %Direction
@@ -1457,16 +1464,14 @@ MOVE_FAIL_BAIL:
      put #echo
      put #echo >$Log Crimson *** MOVE FAILED. ***
      put #echo Crimson *** MOVE FAILED.  ***
-     put #echo Crimson Skipping to next shop
      put #echo
      put #parse MOVE FAILED
-     gosub clear
-     goto %LAST
+     RETURN
 MOVE_END:
      pause 0.0001
      RETURN
 
-nodestination:
+NODESTINATION:
   Echo ## Either you did not enter a destination, or your destination is not recognized.  Please try again! ##
   Echo ## Valid Destinations are: ##
   Echo -------------------------------------------
