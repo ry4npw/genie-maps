@@ -51,7 +51,7 @@ put #class joust off
     var undersegoltha 65
 ##########################################
 
-put #echo >Log Travel script departure from $zonename (map $zoneid: room $roomid)
+put #echo >Log Travel script departure from: $zonename (map $zoneid: room $roomid)
 
 TOP:
 if "shardcitizen" = "yes" then
@@ -735,7 +735,7 @@ THERENGIA:
   if "$zoneid" = "33" then gosub MOVE 1
   if "$zoneid" = "31" && "%detour" = "zaulfung" then gosub MOVE 100
   if "$zoneid" = "31" then gosub MOVE 1
-  if "$zoneid" = "34a" && "%detour" != "rossman" then gosub MOVE 145
+  if "$zoneid" = "34a" && "%detour" != "rossman" then gosub MOVE forest
   if "$zoneid" = "34" && "%detour" = "rossman" then
             {
                 if %lirums < 70 then goto NOCOIN
