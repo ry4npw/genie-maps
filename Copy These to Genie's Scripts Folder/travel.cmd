@@ -23,11 +23,9 @@ put #class joust off
 ##                                      ##
 ##########################################
 ##########################################
-##                                      ##
-##  ARE YOU A SHARD CITIZEN?            ##
-##   yes OR no                          ##
-    var shardcitizen yes
-##                                      ##
+##    ARE YOU A CITIZEN OF SHARD?       ##
+##        CHOOSE yes or no              ##
+     var shardcitizen yes
 ##########################################
 ##    RANKS TO USE THE ROSSMAN'S        ##
 ##          SHORTCUT                    ##
@@ -50,6 +48,12 @@ put #class joust off
 ##    RANKS TO USE UNDER-SEGOLTHA(THIEF)##
     var undersegoltha 65
 ##########################################
+
+## YOU CAN MANUALLY ADJUST THESE IF YOU WANT SUPPORT FOR MULTIPLE CHARACTERS
+if ("$charactername") = ("$char1") then var shardcitizen yes
+if ("$charactername") = ("$char2") then var shardcitizen no
+if ("$charactername") = ("$char3") then var shardcitizen no
+if ("$charactername") = ("$char4") then var shardcitizen no
 
 put #echo >Log Travel script departure from: $zonename (map $zoneid: room $roomid)
 
@@ -1304,13 +1308,14 @@ RETREAT:
   pause 0.1
   RETURN
 MOVE.RETURN:
+  pause 0.001
   pause 0.1
-  pause 0.001
+  pause 0.1
   #put #mapper reset
-  pause 0.001
   RETURN
 RETURN:
   delay 0.001
+  pause 0.001
   RETURN
 
 MOVE_RANDOM:
