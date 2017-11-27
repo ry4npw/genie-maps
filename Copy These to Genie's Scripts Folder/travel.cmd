@@ -478,7 +478,7 @@ CROSSING:
                     }
                 if "%detour" = "leth" then gosub MOVE 18
             }
-  if "$zoneid" = "1" then gosub MOVE 231
+  if "$zoneid" = "1" then gosub MOVE 42
   goto ARRIVED
 
 ILITHI:
@@ -653,7 +653,7 @@ ILITHI:
                 gosub MOVE 19
             }
   if "$zoneid" = "66" then gosub MOVE 216
-  if "$zoneid" = "67" then gosub MOVE 145
+  if "$zoneid" = "67" then gosub MOVE 81
   goto ARRIVED
 THERENGIA:
   var label THERENGIA
