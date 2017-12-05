@@ -720,6 +720,7 @@ THERENGIA:
   if "$zoneid" = "50" then gosub MOVE 8
   if "$zoneid" = "13" then gosub MOVE 71
   if "$zoneid" = "4a" then gosub MOVE 15
+  if "$zoneid" = "32" then gosub MOVE 1
   if "$zoneid" = "4" then gosub MOVE 14
   if "$zoneid" = "8" then gosub MOVE 43
   if "$zoneid" = "10" then gosub MOVE 22
