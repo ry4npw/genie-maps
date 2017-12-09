@@ -1,4 +1,4 @@
-#debuglevel 10
+#debuglevel 5
 put #class racial on
 put #class rp on
 put #class arrive off
@@ -48,13 +48,25 @@ put #class joust off
 ##    RANKS TO USE UNDER-SEGOLTHA(THIEF)##
     var undersegoltha 65
 ##########################################
-
-## YOU CAN MANUALLY ADJUST THESE IF YOU WANT SUPPORT FOR MULTIPLE CHARACTERS
+##########################################
+## MULTIPLE CHARACTER SUPPORT FOR SHARD CITIZEN VARIABLE
+## MAKE GLOBAL VARIABLES CHAR1, CHAR2 etc in Genie 
 if ("$charactername") = ("$char1") then var shardcitizen yes
 if ("$charactername") = ("$char2") then var shardcitizen no
 if ("$charactername") = ("$char3") then var shardcitizen no
 if ("$charactername") = ("$char4") then var shardcitizen no
-
+###########################################
+#       CHANGELOG
+# Shroom - 12/2017
+# - Changed all single movements to gosubs to avoid stalls
+# - Added currency conversion
+# - Will now attempt to exchange coin for ferry before withdrawing
+# - Fixed problem traveling in P5 
+# - Fixed several bad nodes
+# - Added multi-character support for shardcitizen variable
+# - Added logic to and from Muspari 
+# - Added Passport check / Sand Barge 
+##########################################
 put #echo >Log Travel script departure from: $zonename (map $zoneid: room $roomid)
 
 TOP:
@@ -78,11 +90,15 @@ if $joined = 1 then
           var shardcitizen no
           Echo ### You are in a group!  You will NOT be taking the gravy short cuts today! ###
      }
+action goto START when ^Just when it seems you will never reach the end of the road
+action goto NOPASSPORT when No one proceeds through this checkpoint without a passport
 action goto NOCOIN when ^\"Hey\,\" he says\, \"You haven\'t
+action var offtransport platform when a barge platform\.
 action var offtransport pier when the Riverhaven pier\.
 action var offtransport wharf when the Langenfirth wharf\.
-action var offtransport dock when \[\"Her Opulence\"\]|\[\"Hodierna\'s Grace\"\]|\[\"Kertigen\'s Honor\"\]|\[\"His Daring Exploit\"\]|\[The Evening Star\]|\[The Damaris\' Kiss\]|\[A Birch Skiff\]|\[A Highly Polished Skiff\]|Baso Docks|
+action var offtransport dock when \[\"Her Opulence\"\]|\[\"Hodierna\'s Grace\"\]|\[\"Kertigen\'s Honor\"\]|\[\"His Daring Exploit\"\]|\[The Evening Star\]|\[The Damaris\' Kiss\]|\[A Birch Skiff\]|\[A Highly Polished Skiff\]|Baso Docks|a dry dock
 action put fatigue when ^You can see a ferry approaching on the left side.|^The ferry|^A kingfisher|^A burst of|^The Elven|^The skiff|^The polemen|^Small waves|^The sturdy stone|^You are about a fourth of the way across\.|^The ferry moves away\, nearly out of view\.|ferry passing you on the left\.|^You are nearing the docks\.|^A swarm of eels passes beneath the keel\, probably on their way to the river\'s fresh water to spawn\.|followed by the clatter of wood on wood\.|^A family of dolphins leaps from the water beside the galley\.|^Some geese in a perfect V fly north high overhead\.|^Some small blue sharks slide past through the water\.|^A sailor walks by with a coil of rope\.|^A green turtle as large as a tower shield swims past\,|^You are nearing the docks\.|A drumbeat sounds through the ship\.|^You are about a fourth of the way across\.|^A galley comes into sight\, its oars beating rhythmically\.|^The galley moves away\, the beat of its drum slowly fading\.|^For a few minutes\, the drumbeat from below is echoed across the water by the beat from the galley passing on the left\.|The door swings shut of its own accord, and the gondola pushes off\.|The platform vanishes against the ridgeline\.|The gondola arrives at the center of the chasm\, and keeps heading (north|south)\.|The cab trundles on along as the ropes overhead creak and moan\.|The ropes creak as the gondola continues (north|south)\.|^The gondola creaks as a wind pushes it back and forth\.|^You hear a bell ring out three times|^The barge|^Several oars pull|^All that is visible|^The opposite bank|^A few of the other passengers|^The shore disappears
+action put fatigue when ^A desert oasis|^The oasis|The endless expanse of the desert|The dock disappears from view quickly|sand-bearing winds buffet|Several skilled yeehar-handlers|^The Sand Elf|^The harsh winds|^The Gemfire Mountains|^The extreme heat causes|^The sand barge|^The large yeehars|^The murderous shriek|dark-skinned elf|Dark-skinned Elves|^As the barge is pulled
 action put look when ^Your destination
 action put #var Guild $1 when Guild\: (\S+)
 action put #var Circle $1 when Circle\: (\d+)
@@ -106,6 +122,7 @@ send exp 0
 wait
 pause 0.1
 put #var save
+START:
 if "%destination" = "" then goto NODESTINATION
 if ("$zoneid" = "0") || ("$roomid" = "0") then
      {
@@ -291,6 +308,11 @@ goto NODESTINATION
 # TRAVEL
 CROSSING:
   var label CROSSING
+  if "$zoneid" = "47" then 
+            {
+                gosub MOVE 117
+                gosub FERRYLOGIC
+            }
   if "$zoneid" = "41" then gosub MOVE 53
   if "$zoneid" = "42" then gosub MOVE 2
   if "$zoneid" = "59" then gosub MOVE 12
@@ -496,6 +518,11 @@ ILITHI:
                 wait
             }
   if "$zoneid" = "123" then gosub MOVE 175
+  if "$zoneid" = "47" then 
+            {
+                gosub MOVE 117
+                gosub FERRYLOGIC
+            }
   if "$zoneid" = "41" then gosub MOVE 53
   if "$zoneid" = "42" then gosub MOVE 2
   if "$zoneid" = "59" then gosub MOVE 12
@@ -758,14 +785,37 @@ THERENGIA:
                         gosub MOVE 1
                     }
             }
+  if "$zoneid" = "47" then 
+            {
+                gosub MOVE 117
+                gosub FERRYLOGIC
+            }
   if "$zoneid" = "41" then if matchre("(muspari|fornsted)","%detour") then
             {
-                if matchre("(muspari|fornsted)","%detour") then
+                if matchre("fornsted","%detour") then
                     {
-                        gosub MOVE 85
+                        gosub MOVE 91
                         goto ARRIVED
                     }
-                else gosub MOVE 53
+                if matchre("muspari","%detour") then
+                    {
+                        gosub MOVE 91
+                        gosub PASSPORT
+                        gosub MOVE 160
+                        gosub FERRYLOGIC
+                    }
+            }
+  if "$zoneid" = "41" then gosub MOVE 53
+  if "$zoneid" = "47" && matchre("muspari","%detour" then
+            {
+                gosub MOVE 235
+                goto ARRIVED
+            }
+  if "$zoneid" = "47" then 
+            {
+                gosub MOVE 117
+                gosub FERRYLOGIC
+                goto START
             }
   if "$zoneid" = "30" && matchre("(rossman|lang|theren|rakash|muspari|fornsted|el'bain)","%detour") then
             {
@@ -1029,7 +1079,7 @@ ARRIVED:
   
 ## ENGINE
 FERRYLOGIC:
-  if contains("(1|7|30|60|40|113)","$zoneid" then goto FERRY
+  if contains("(1|7|30|60|40|41|47|113)","$zoneid" then goto FERRY
   if "$zoneid" = "66" then
         {
             var direction north
@@ -1067,27 +1117,44 @@ FERRY:
   pause 0.1
   pause 0.1
   ## Future money stuff - "Hey," he says, "You haven't got enough lirums to pay for your trip.  Come back when you can afford the fare."
-  matchre ONFERRY \[\"Her Opulence\"\]|\[\"Hodierna\'s Grace\"\]|\[\"Kertigen\'s Honor\"\]|\[\"His Daring Exploit\"\]|\[\"Northern Pride\"\, Main Deck\]|\[\"Theren\'s Star\"\, Deck\]|\[The Evening Star\]|\[The Damaris\' Kiss\]|\[A Birch Skiff\]|\[A Highly Polished Skiff\]
+  matchre ONFERRY \[\"Her Opulence\"\]|\[\"Hodierna\'s Grace\"\]|\[\"Kertigen\'s Honor\"\]|\[\"His Daring Exploit\"\]|\[\"Northern Pride\"\, Main Deck\]|\[\"Theren\'s Star\"\, Deck\]|\[The Evening Star\]|\[The Damaris\' Kiss\]|\[A Birch Skiff\]|\[A Highly Polished Skiff\]|\[\"The Desert Wind\"\]|\[\"The Suncatcher\"\]
   send look
+  pause 0.5
   if matchre ("$roomobjs","Star") then send go ferry
   if matchre ("$roomobjs","skiff") then send go skiff
   if matchre ("$roomobjs","Kiss") then send go ferry
   if matchre ("$roomobjs","ferry") then send go ferry
   if matchre ("$roomobjs","barge") then send go barge
   matchwait 2
-  pause 10
+  pause 15
+  echo ### Waiting for a ferry..
   goto FERRY
 ONFERRY:
   pause 0.1
   pause 0.1
-  matchre OFFTHERIDE dock and its crew ties the (ferry|barge) off\.|^You come to a very soft stop|^The skiff lightly taps
+  echo ### Riding on ferry. Final Destination: %destination
+  matchre OFFTHERIDE dock and its crew ties the (ferry|barge) off\.|^You come to a very soft stop|^The skiff lightly taps|^The sand barge pulls into dock
   matchwait
 OFFTHERIDE:
+  put look
   pause
+  pause 0.1
   put go %offtransport
   pause
   put #mapper reset
   RETURN
+  
+PASSPORT:
+  gosub STOWING
+  pause 0.3
+  matchre RETURN ^You get|^You are already
+  matchre NOPASSPORT ^What were you|^I could not
+  send get my passport
+  matchwait 5
+
+NOPASSPORT:
+  echo ### You don't have a Muspari Passport! Go back to Therenborough to get one.
+  goto ARRIVED
   
 NOCOIN:
   put #parse NO COINS!
@@ -1262,6 +1329,109 @@ EXCH.INVIS:
      send stop hum
      pause 0.1
      goto EXCHANGE.CONTINUE
+     
+## Stow
+STOWING:
+     delay 0.0001
+     var LOCATION STOWING
+     if "$righthand" = "vine" then put drop vine
+     if "$lefthand" = "vine" then put drop vine
+     if "$righthandnoun" = "rope" then put coil my rope
+     if "$righthand" = "bundle" || "$lefthand" = "bundle" then put wear bund;drop bun
+     #if matchre("$righthandnoun","(crossbow|bow|short bow)") then gosub unload
+     if matchre("$righthandnoun","(block|granite block)") then put drop block
+     if matchre("$lefthandnoun","(block|granite block)") then put drop block
+     if matchre("$righthand","(partisan|shield|buckler|lumpy bundle|halberd|staff|longbow|khuj)") then gosub wear my $1
+     if matchre("$lefthand","(partisan|shield|buckler|lumpy bundle|halberd|staff|longbow|khuj)") then gosub wear my $1
+     if matchre("$lefthand","(longbow|khuj)") then gosub stow my $1 in my %SHEATH
+     if "$righthand" != "Empty" then GOSUB STOW right
+     if "$lefthand" != "Empty" then GOSUB STOW left
+     RETURN
+STOW:
+     var todo $0
+STOW1:
+     delay 0.0001
+     var LOCATION STOW1
+     if "$righthand" = "vine" then put drop vine
+     if "$lefthand" = "vine" then put drop vine
+     matchre WAIT ^\.\.\.wait|^Sorry\,
+     matchre IMMOBILE ^You don't seem to be able to move to do that
+     matchre WEBBED ^You can't do that while entangled in a web
+     matchre STUNNED ^You are still stunned
+     matchre STOW2 not designed to carry anything|any more room|no matter how you arrange|^That's too heavy|too thick|too long|too wide|^But that's closed|I can't find your container|^You can't 
+     matchre RETURN ^Wear what\?|^Stow what\?  Type 'STOW HELP' for details\.
+     matchre RETURN ^You put
+     matchre RETURN ^You open
+     matchre RETURN needs to be
+     matchre RETURN ^You stop as you realize
+     matchre RETURN ^But that is already in your inventory\.
+     matchre RETURN ^That can't be picked up
+     matchre LOCATION.unload ^You should unload the
+     matchre LOCATION.unload ^You need to unload the
+     put stow %todo
+     matchwait 15
+     put #echo >$Log Crimson $datetime *** MISSING MATCH IN STOW! ***
+     put #echo >$Log Crimson $datetime Stow = %todo
+     put #log $datetime MISSING MATCH IN STOW (base.inc)
+STOW2:
+     delay 0.0001
+     var LOCATION STOW2
+     matchre RETURN ^Wear what\?|^Stow what\?
+     matchre RETURN ^You put
+     matchre RETURN ^But that is already in your inventory\.
+     matchre stow3 any more room|no matter how you arrange|^That's too heavy|too thick|too long|too wide|not designed to carry anything|^But that's closed
+     matchre LOCATION.unload ^You should unload the
+     matchre LOCATION.unload ^You need to unload the
+     put stow %todo in my pack
+     matchwait 15
+     put #echo >$Log Crimson $datetime *** MISSING MATCH IN STOW2! ***
+     put #echo >$Log Crimson $datetime Stow = %todo
+     put #log $datetime MISSING MATCH IN STOW2 (base.inc)
+STOW3:
+     delay 0.0001
+     var LOCATION STOW3
+     if "$lefthandnoun" = "bundle" then put drop bun
+     if "$righthandnoun" = "bundle" then put drop bun
+     matchre open.thing ^But that's closed
+     matchre RETURN ^Wear what\?|^Stow what\?
+     matchre RETURN ^You put
+     matchre RETURN ^But that is already in your inventory\.
+     matchre STOW4 any more room|no matter how you arrange|^That's too heavy|too thick|too long|too wide|not designed to carry anything|^But that's closed
+     matchre LOCATION.unload ^You should unload the
+     matchre LOCATION.unload ^You need to unload the
+     put stow %todo in my backpack
+     matchwait 15
+     put #echo >$Log Crimson $datetime *** MISSING MATCH IN STOW3! ***
+     put #echo >$Log Crimson $datetime Stow = %todo
+     put #log $datetime MISSING MATCH IN STOW3 (base.inc)
+STOW4:
+     delay 0.0001
+     var LOCATION STOW4
+     if "$lefthandnoun" = "bundle" then put drop bun
+     if "$righthandnoun" = "bundle" then put drop bun
+     matchre open.thing ^But that's closed
+     matchre RETURN ^Wear what\?|^Stow what\?
+     matchre RETURN ^You put your
+     matchre RETURN ^But that is already in your inventory\.
+     matchre REM.WEAR any more room|no matter how you arrange|^That's too heavy|too thick|too long|too wide
+     matchre LOCATION.unload ^You should unload the
+     matchre LOCATION.unload ^You need to unload the
+     put stow %todo in my haversack
+     matchwait 15
+     put #echo >$Log Crimson $datetime *** MISSING MATCH IN STOW4! (base.inc) ***
+     put #echo >$Log Crimson $datetime Stow = %todo
+     put #log $datetime MISSING MATCH IN STOW4 (base.inc)
+OPEN.THING:
+     put open back
+     put open hav
+     pause 0.2
+     goto STOWING
+REM.WEAR:
+     put rem bund
+     put drop bund
+     wait
+     pause 0.5
+     goto WEAR1
 
 ## Movement
 MOVE.RETRY:
@@ -1477,6 +1647,33 @@ MOVE_END:
      pause 0.0001
      RETURN
 
+#### CATCH AND RETRY SUBS
+WAIT:
+     delay 0.0001
+     pause 0.1
+     if (!$standing) then gosub STAND
+     goto %LOCATION
+WEBBED:
+     delay 0.0001
+     if ($webbed) then waiteval (!$webbed)
+     if (!$standing) then gosub STAND
+     goto %LOCATION
+IMMOBILE:
+     delay 0.0001
+     if contains("$prompt" , "I") then pause 20
+     if (!$standing) then gosub STAND
+     goto %LOCATION
+STUNNED:
+     delay 0.0001
+     if ($stunned) then waiteval (!$stunned)
+     if (!$standing) then gosub STAND
+     goto %LOCATION
+CALMED:
+     delay 5
+     if ($stunned) then waiteval (!$stunned)
+     if (!$standing) then gosub STAND
+     goto %LOCATION
+     
 NODESTINATION:
   Echo ## Either you did not enter a destination, or your destination is not recognized.  Please try again! ##
   Echo ## Valid Destinations are: ##
