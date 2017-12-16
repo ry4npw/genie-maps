@@ -55,8 +55,8 @@ put #class joust off
 # Related aliases
 # ---------------
 # Add the following aliases for toggling dragging:
-# #alias {dragoff} {#var drag 0;#var drag.target}
-# #alias {dragon} {#var drag 1;#var drag.target $0}
+# #alias {drag2} {#var drag 0;#var drag.target}
+# #alias {drag1} {#var drag 1;#var drag.target $0}
 # Add the following aliases for toggling treasure map mode:
 # #alias {mapoff} {#var mapwalk 0}
 # #alias {mapon} {#var mapwalk 1}
