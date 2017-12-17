@@ -140,18 +140,18 @@ if "$zoneid" = "0" then
           exit
      }
 #DESTINATION
-if matchre("(cro|cros|cross|crossi|crossin|crossing|crossings)","%1") then goto CROSSING
-if matchre("(wol|wolf|wolfc|wolfcl|wolfcla|wolfclan)","%destination") then
+if matchre("(cro|cros|cross|crossi|crossin|crossing|crossings|CROSS|CROSSING|XING)","%1") then goto CROSSING
+if matchre("(wol|wolf|wolfc|wolfcl|wolfcla|wolfclan|WOLF|WOLFCLAN)","%destination") then
      {
           var detour wolf
           goto CROSSING
      }
-if matchre("(kni|knif|knife|knifec|knifecl|knifecla|knifeclan)","%destination") then
+if matchre("(kni|knif|knife|knifec|knifecl|knifecla|knifeclan|KNIFE|KNIFECLAN)","%destination") then
      {
           var detour knife
           goto CROSSING
      }
-if matchre("(tig|tige|tiger|tigerc|tigercl|tigercla|tigerclan)","%destination") then
+if matchre("(tig|tige|tiger|tigerc|tigercl|tigercla|tigerclan|TIGER|TIGERCLAN)","%destination") then
      {
           var detour tiger
           goto CROSSING
@@ -161,7 +161,7 @@ if matchre("(dir|dirg|dirge)","%destination") then
           var detour dirge
           goto CROSSING
      }
-if matchre("(art|arth|arthe|arthed|artheda|arthedal|arthedale)","%destination") then
+if matchre("(art|arth|arthe|arthed|artheda|arthedal|arthedale|ARTHE|ARTHEDALE)","%destination") then
      {
           var detour arthe
           goto CROSSING
@@ -171,32 +171,32 @@ if matchre("(kae|kaer|kaern|kaerna)","%destination") then
           var detour kaerna
           goto CROSSING
      }
-if matchre("(ila|ilay|ilaya|ilayat|ilayata|ilayatai|ilayataip|ilayataipa|tai|taip|taipa)","%destination") then
+if matchre("(ila|ilay|ilaya|ilayat|ilayata|ilayatai|ilayataip|ilayataipa|tai|taip|taipa|ILA|ILAY|ILAYA|ILAYAT|ILAYATA|ILAYATAI|ILAYATAIP|ILAYATAIPA|TAIPA)","%destination") then
      {
           var detour taipa
           goto CROSSING
      }
-if matchre("(let|leth|lethd|lethde|lethder|lethderi|lethderie|lethderiel)","%destination") then
+if matchre("(let|leth|lethd|lethde|lethder|lethderi|lethderie|lethderiel|LETH|LETHDERIEL)","%destination") then
      {
           var detour leth
           goto CROSSING
      }
-if matchre("(ace|acen|acena|acenam|acenama|acenamac|acenamacr|acenamacra)","%destination") then
+if matchre("(ace|acen|acena|acenam|acenama|acenamac|acenamacr|acenamacra|ACE|ACEN|ACENAMACRA)","%destination") then
      {
           var detour acen
           goto CROSSING
      }
-if matchre("(vip|vipe|viper|vipers|gua|guard|guardi|guardia|guardian|guardians|leu|leuc|leucr|leucro|leucros)","%destination") then
+if matchre("(vip|vipe|viper|vipers|gua|guard|guardi|guardia|guardian|guardians|leu|leuc|leucr|leucro|leucros|VIPERS|GUARDIANS|LEUCRO)","%destination") then
      {
           var detour viper
           goto CROSSING
      }
-if matchre("(sor|sorr|sorro|sorrow|sorrows)","%destination") then
+if matchre("(sor|sorr|sorro|sorrow|sorrows|SORROW)","%destination") then
      {
           var detour sorrow
           goto CROSSING
      }
-if matchre("(mis|mise|misen|misens|misense|misenseo|misenseor)","%destination") then
+if matchre("(mis|mise|misen|misens|misense|misenseo|misenseor|MISENSEOR)","%destination") then
      {
           var detour misen
           goto CROSSING
@@ -206,103 +206,103 @@ if matchre("(sto|ston|stone)","%destination") then
           var detour stone
           goto CROSSING
      }
-if matchre("(sha|shar|shard)","%destination") then goto ILITHI
-if matchre("(spi|spir|spire)","%destination") then
+if matchre("(sha|shar|shard|SHARD)","%destination") then goto ILITHI
+if matchre("(spi|spir|spire|SPIRE)","%destination") then
      {
           var detour spire
           goto ILITHI
      }
-if matchre("(hor|hors|horse)","%destination") then
+if matchre("(hor|hors|horse|HORSE)","%destination") then
      {
           var detour horse
           goto ILITHI
      }
-if matchre("(fay|fayr|fayri|fayrin|fayrin'|fayrin's)","%destination") then
+if matchre("(fay|fayr|fayri|fayrin|fayrin'|fayrin's|FAYRIN|FAYRIN'S)","%destination") then
      {
           var detour fayrin
           goto ILITHI
      }
-if matchre("(ste|stee|steel|steelc|steelcl|steelcla|steelclaw)","%destination") then
+if matchre("(ste|stee|steel|steelc|steelcl|steelcla|steelclaw|STEELCLAW)","%destination") then
      {
           var detour steel
           goto ILITHI
      }
-if matchre("(cor|cori|corik|corik'|corik's)","%destination") then
+if matchre("(cor|cori|corik|corik'|corik's|CORIK)","%destination") then
      {
           var detour corik
           goto ILITHI
      }
-if matchre("(ada|adan|adan'|adan'f)","%destination") then
+if matchre("(ada|adan|adan'|adan'f||ADAN|ADAN'F)","%destination") then
      {
           var detour adan'f
           goto ILITHI
      }
-if matchre("(ylo|ylon|ylono)","%destination") then
+if matchre("(ylo|ylon|ylono|YLONO)","%destination") then
      {
           var detour ylono
           goto ILITHI
      }
-if matchre("(riv|rive|river|riverh|riverha|riverhav|riverhave|riverhaven|hav|have|haven)","%destination") then
+if matchre("(riv|rive|river|riverh|riverha|riverhav|riverhave|riverhaven|hav|have|haven|RIVERHAVEN|HAVEN|RIVER|RIV|RIVE|RIVERH|HAV|HAVE)","%destination") then
      {
           var detour haven
           goto THERENGIA
      }
-if matchre("(ros|ross|rossm|rossma|rossman|rossmans)","%destination") then
+if matchre("(ros|ross|rossm|rossma|rossman|rossmans|ROSS|ROSSMAN)","%destination") then
      {
           var detour rossman
           goto THERENGIA
      }
-if matchre("(the|ther|there|theren|therenb|therenbo|therenbor|therenborou|therenboroug|therenborough)","%destination") then
+if matchre("(the|ther|there|theren|therenb|therenbo|therenbor|therenborou|therenboroug|therenborough|THEREN|THERENBOROUGH)","%destination") then
      {
           var detour theren
           goto THERENGIA
      }
-if matchre("(lan|lang|lange|langen|langenf|langenfi|langenfir|langenfirt|langenfirth)","%destination") then
+if matchre("(lan|lang|lange|langen|langenf|langenfi|langenfir|langenfirt|langenfirth|LANG|LANGEN|LANGENFIRTH)","%destination") then
      {
           var detour lang
           goto THERENGIA
      }
-if matchre("(rak|raka|rakas|rakash)","%destination") then
+if matchre("(rak|raka|rakas|rakash|RAK|RAKASH)","%destination") then
      {
           var detour rakash
           goto THERENGIA
      }
-if matchre("(mus|musp|muspa|muspar|muspari)","%destination") then
+if matchre("(mus|musp|muspa|muspar|muspari|MUS|MUSP|MUSPA|MUSPAR|MUSPARI)","%destination") then
      {
           var detour muspari
           goto THERENGIA
      }
-if matchre("(forn|forns|fornst|fornste|fornsted)","%destination") then
+if matchre("(forn|forns|fornst|fornste|fornsted|FORN|FORNSTED)","%destination") then
      {
           var detour fornsted
           goto THERENGIA
      }
-if matchre("(zau|zaul|zaulf|zaulfu|zaulfun|zaulfung)","%destination") then
+if matchre("(zau|zaul|zaulf|zaulfu|zaulfun|zaulfung|ZAULFUNG)","%destination") then
      {
           var detour zaulfung
           goto THERENGIA
      }
-if matchre("(ain|aing|aingh|aingha|ainghaz|ainghaza|ainghazal)","%destination") then
+if matchre("(ain|aing|aingh|aingha|ainghaz|ainghaza|ainghazal|AIN|AINGHAZAL|AING|AINGH)","%destination") then
      {
           var detour ain
           goto FORD
      }
-if matchre("(rav|rave|raven'|raven's)","%destination") then
+if matchre("(rav|rave|raven'|raven's|RAV|RAVE|RAVEN|RAVEN'S)","%destination") then
      {
           var detour raven
           goto FORD
      }
-if matchre("(out|oute|outer|hib|hiba|hibar|hibarn|hibarnh|hibarnhv|hibarnhvi|hibarnhvid|hibarnhvida|hibarnhvidar|hibble|hibbles|hibheigh|hibdjfekbhr|hibarvhigdladrwfws)","%destination") then
+if matchre("(out|oute|outer|hib|hiba|hibar|hibarn|hibarnh|hibarnhv|hibarnhvi|hibarnhvid|hibarnhvida|hibarnhvidar|hibble|hibbles|hibheigh|hibdjfekbhr|hibarvhigdladrwfws|OUT|OUTER|HIB|HIBA|HIBAR|HIBARN|HIBARNH|HIBARNHV|HIBARNHVIDAR)","%destination") then
      {
           var detour outer
           goto FORD
      }
-if matchre("(inn|inne|inner)","%destination") then
+if matchre("(inn|inne|inner|INNER|INN)","%destination") then
      {
           var detour inner
           goto FORD
      }
-if matchre("(boa|boar)","%destination") then goto FORD
+if matchre("(boa|boar|BOAR|BOA)","%destination") then goto FORD
 goto NODESTINATION
 
 # TRAVEL
@@ -384,8 +384,8 @@ CROSSING:
   if "$zoneid" = "62" then gosub MOVE 100
   if "$zoneid" = "112" then gosub MOVE 112
   if "$zoneid" = "58" then gosub MOVE 2
-  if "$zoneid" = "60" && matchre("(leth|acen|taipa)","%detour") then gosub MOVE 57
-  if "$zoneid" = "61" && matchre("(leth|acen|taipa)","%detour") then
+  if "$zoneid" = "60" && matchre("(leth|acen|taipa|LETH|ACEN)","%detour") then gosub MOVE 57
+  if "$zoneid" = "61" && matchre("(leth|acen|taipa|LETH|ACEN)","%detour") then
             {
                 if "%detour" = "acen" then
                     {
