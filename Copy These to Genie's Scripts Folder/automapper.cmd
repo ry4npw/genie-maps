@@ -1,4 +1,4 @@
-#debuglevel 10
+#debuglevel 5
 put #class racial on
 put #class rp on
 put #class arrive off
@@ -6,7 +6,7 @@ put #class combat off
 put #class joust off
 
 # automapper.cmd version 6.0
-# last changed: October 23, 2017
+# last changed: December 17th, 2017
 
 # Added handler for attempting to enter closed shops from Shroomism
 # Added web retry support from Dasffion
@@ -35,13 +35,13 @@ put #class joust off
 # Added additional catches for closed shops
 # Added support for knocking on a town gate (Shard) during Night to get in. (Need to add checks for Non-Citizens, may cause problems with non-citizens)
 # Added catches for trying to go through gate while invisible or with a cloak concealing face.
-# Added support for climbing with ropes
+# Added support for climbing with ropes 
 # Added matches for Theren tunnels so script does not get stuck in infinite loop trying to stand
 # Added catch for Shard citizens now being able to enter closed shops at night
-# Added stamina support for Aesry stairs - Will cast fatigue recovery buffs if possible and pause to wait for stamina
+# Added stamina support for Aesry stairs - Will cast fatigue recovery buffs if possible and pause to wait for stamina 
 
 # 2017-11-13 - Shroom - Synced changes and updates from TF and Prime versions -  To make compatible across both instances
-# Added ICE SKATE support for Ice Road - Checks for ice skates and wears them during ice road, also checks your footwear and puts it back on after
+# Added ICE SKATE support for Ice Road - Checks for ice skates and wears them during ice road, also checks your footwear and puts it back on after 
 # Added support for Stowing foot item when you have an item stuck at your feet
 
 # Related macros
@@ -137,6 +137,8 @@ actions:
      action (skates) var wearingskates 1 when ^You slide your ice skates on your feet and tightly tie the laces\.|^Your ice skates help you traverse the frozen terrain\.|^Your movement is hindered a little by your ice skates\.
      action (skates) var wearingskates 0 when ^You untie your skates and slip them off of your feet\.
      action var slow_on_ice 1; echo Ice detected! when ^You had better slow down\! The ice is|^At the speed you are traveling
+     action goto jailed when a sound not unlike that of a tomb|binds you in chains|firmly off to jail|drag you off to jail|brings you to the jail|the last thing you see before you black out|your possessions have been stripped|You are a wanted criminal, $charactername
+     action goto jailed when your belongings have been stripped|in a jail cell wearing a set of heavy manacles|strip you of all your possessions|binds your hands behind your back|Your silence shall be taken as an indication of your guilt|The eyes of the court are upon you|Your silence can only be taken as evidence of your guilt
      return
 loop:
      gosub wave
@@ -233,6 +235,7 @@ move.real:
        }
      if %removed = 1 then
        {
+         action (mapper) off
          echo *** Putting your footwear back on ****
          pause .0001
          pause .0001
@@ -241,6 +244,7 @@ move.real:
          wait
          send wear my %item
          wait
+         action (mapper) on
        }
      if "$zoneid" = "62" && "$game" = "DRF" then
         {
@@ -303,7 +307,7 @@ skate.check:
      matchre skate.yes ^You tap
      matchre skate.no ^I could not|^What were you
      put tap ice skate
-     matchwait
+     matchwait 7
 skate.no:
      var slow_on_ice 1
      var wearingskates 0
@@ -312,9 +316,10 @@ skate.no:
      RETURN
 skate.yes:
      action (mapper) on
-     echo *** Success! ***
+     echo *** Success! Ice Skates Found! ***
+     pause 0.1
 footwear.check:
-     echo *** Checking your footwear.. ***
+     echo *** Checking for any footwear.. ***
      pause 0.1
      matchre footware.remove (boots?|shoes?|moccasins?|sandals?|slippers?|mules|workboots?|footwraps?|footwear|spats?|chopines?|nuada|booties|clogs|buskins|cothurnes?|galoshes)
      matchre footware.remove (half-boots?|ankle-boots?|gutalles?|hessians?|brogans?|toe ring|toe bells?|toe-bells?|toe-ring|loafers?|pumps?)
@@ -640,7 +645,18 @@ move.closed:
      echo ********************************
      echo
      put #parse SHOP IS CLOSED
-  put #parse SHOP CLOSED
+     put #parse SHOP CLOSED
+     exit
+jailed:
+     echo
+     echo ********************************
+     echo    GOT THROWN IN JAIL!
+     echo    ABORTING AUTOMAPPER
+     echo ********************************
+     echo
+     put #parse JAILED
+     put #parse NAILED AND JAILED!
+     put #parse THROWN IN JAIL
      exit
 move.failed:
      evalmath failcounter %failcounter + 1
