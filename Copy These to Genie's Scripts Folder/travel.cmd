@@ -677,6 +677,7 @@ ILITHI:
   if "$zoneid" = "66" && "$guild" = "Thief" then
             {
                 gosub MOVE 617
+                pause 0.5
                 gosub MOVE 19
             }
   if "$zoneid" = "66" then gosub MOVE 216
@@ -711,6 +712,7 @@ THERENGIA:
   if "$zoneid" = "67" && "$guild" = "Thief" then
             {
                 gosub MOVE 566
+                pause 0.5
                 gosub MOVE 23
             }
   if "$zoneid" = "67" then gosub MOVE 132
