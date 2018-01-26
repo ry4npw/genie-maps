@@ -1169,9 +1169,9 @@ NOCOIN:
             var currencyneeded kro
             gosub MOVE exchange
             gosub KRONARS
-            if %kronars >= 50 then goto COIN.CONTINUE
+            if %kronars >= 52 then goto COIN.CONTINUE
             gosub MOVE teller
-            put withdraw 35 copper
+            put withdraw 50 copper
             wait
         }
   if "$zoneid" = "60" then gosub MOVE leth
@@ -1181,9 +1181,9 @@ NOCOIN:
             gosub MOVE 57
             gosub MOVE exchange
             gosub KRONARS
-            if %kronars >= 50 then goto COIN.CONTINUE
+            if %kronars >= 52 then goto COIN.CONTINUE
             gosub MOVE teller
-            put withdraw 35 copper
+            put withdraw 50 copper
             wait
         }
    if "$zoneid" = "30" then
