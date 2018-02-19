@@ -57,6 +57,9 @@ if ("$charactername") = ("$char3") then var shardcitizen no
 if ("$charactername") = ("$char4") then var shardcitizen no
 ###########################################
 #       CHANGELOG
+# Chris - 2/19/2018
+# - Resolved issue of not matching when %1 was capitalized.
+#
 # Shroom - 12/2017
 # - Changed all single movements to gosubs to avoid stalls
 # - Added currency conversion
@@ -112,6 +115,7 @@ var kronars 0
 var dokoras 0
 var lirums 0
 var destination %1
+eval destination tolower("%destination")
 var detour nil
 put #mapper reset
 pause 0.5
@@ -140,7 +144,7 @@ if "$zoneid" = "0" then
           exit
      }
 #DESTINATION
-if matchre("(cro|cros|cross|crossi|crossin|crossing|crossings|CROSS|CROSSING|XING)","%1") then goto CROSSING
+if matchre("(cro|cros|cross|crossi|crossin|crossing|crossings|CROSS|CROSSING|XING)","%destination") then goto CROSSING
 if matchre("(wol|wolf|wolfc|wolfcl|wolfcla|wolfclan|WOLF|WOLFCLAN)","%destination") then
      {
           var detour wolf
